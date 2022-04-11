@@ -29,21 +29,37 @@
 \RequirePackage{ulem}
 \RequirePackage{iftex}
 \RequirePackage{hyperref}
+\RequirePackage{relsize}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
   family=REVISOR,
   prefix=REVISOR@
 }
 \DeclareBoolOption{todonotes} % use todonotes instead of footnotes
-\DeclareBoolOption{hide} % hide comments and changes
+\DeclareStringOption{hide}[before] % hide=before hide=after
+\def\REVISOR@before{before}
+\def\REVISOR@after{after}
 \DeclareBoolOption{inline} % inline comments
 \ProcessKeyvalOptions*
 
 %% Revision commands
-% FIXME: \sout is not very good. It cannot handle commands within its argument.
-\ifREVISOR@hide
-\newcommand{\newrevisor@SuggestEdit}[4][red]{#3}
+\ifx\REVISOR@hide\@empty
 \else
+\ifx\REVISOR@before\REVISOR@hide
+\newcommand{\newrevisor@SuggestEdit}[4]{#2}
+\else
+\ifx\REVISOR@after\REVISOR@hide
+\newcommand{\newrevisor@SuggestEdit}[4]{#1}
+\else
+\PackageError{\@currname}{Unknown value for option 'hide='. Valid values are 'before' or 'after'}{Unknown value for option 'hide='. Valid values are 'before' or 'after'}
+% We set this so we can continue without throwing more errors.
+\let\REVISOR@hide\@empty
+\fi
+\fi
+\fi
+
+% FIXME: \sout is not very good. It cannot handle commands within its argument.
+\ifx\REVISOR@hide\@empty
 \DeclareRobustCommand{\mysout}[1]{%
   \LetLtxMacro\origcite\cite%
   \renewcommand{\cite}[2][]{\mbox{\origcite[##1]{##2}}}%
@@ -59,13 +75,13 @@
   %\makeatother%
   \texorpdfstring{\ifmmode\text{\sout{\ensuremath{#1}}}\else\sout{#1}\fi}{#1}}%
 \newcommand{\newrevisor@SuggestEdit}[4]{{\color{#3}\hypersetup{citecolor=#3}\mysout{#1}}{\color{#4}\hypersetup{citecolor=#4}#2}}%
-\fi
+\fi % no hide
 
 \ifREVISOR@todonotes
-\ifREVISOR@hide
-\PassOptionsToPackage{disable}{todonotes}
-\else
+\ifx\REVISOR@hide\@empty
 \PassOptionsToPackage{textsize=tiny,prependcaption}{todonotes}
+\else
+\PassOptionsToPackage{disable}{todonotes}
 \fi % hide
 \RequirePackage{todonotes}
 \newcommand{\newrevisor@RevComment}[3][red]{\todo[color=#1!29, bordercolor=#1!47, caption={\textbf{#2}}]{#3}}
@@ -91,13 +107,14 @@
 % \let\sv@makefnmark\@makefnmark
 % \newcommand\colorfootnote[2][black]{\renewcommand\@makefnmark{\color{#1}\sv@makefnmark}\footnote{\protect{\color{#1}#2}}\renewcommand\@makefnmark{\sv@makefnmark}}
 % \makeatother
-\ifREVISOR@hide
-\newcommand{\newrevisor@RevComment}[3][red]{}
-\else\ifREVISOR@inline
-\newcommand\newrevisor@RevComment[3][red]{\begingroup\bfseries\hskip 0pt\color{#1}[#2: #3]\endgroup}
+\ifx\REVISOR@hide\@empty
+\ifREVISOR@inline
+\newcommand\newrevisor@RevComment[3][red]{\hskip 0pt\begingroup\color{#1}\footnotesize\bfseries[{\smaller #2}: #3]\endgroup}
 \else
-\newcommand\newrevisor@RevComment[3][red]{\protect\colorfootnote[#1]{{\textbf{[#2: #3]}}}}
+\newcommand\newrevisor@RevComment[3][red]{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
 \fi % inline
+\else
+\newcommand{\newrevisor@RevComment}[3][red]{}
 \fi % hide
 \fi % todonotes
 

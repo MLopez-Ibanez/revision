@@ -1,5 +1,14 @@
 # revision: A LaTeX package to suggest editions and add comments.
 
+## Options
+
+  * `todonotes`: Use package `todonotes` to create comments instead of footnotes.
+  * `inline` : make comments appear inline instead of footnotes.
+  * `hide=[before|after]`: hide comments and keep additions (`hide=before`) or
+    deletions (`hide=after`). Just using `hide` is equivalent to `hide=before`.
+     
+## Usage
+
 This package defines 2 commands:
 
 1. `\newrevisor{name}{color-for-insert}[color-for-delete]` where the first
