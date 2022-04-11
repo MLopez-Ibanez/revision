@@ -6,9 +6,7 @@ This package defines 2 commands:
    argument is the name of the revisor, second argument is color for additions
    and third optional argument is color for deletions. If the third argument is
    missing, the second argument is used for both additions and deletions.  See
-   colornames in https://en.wikibooks.org/wiki/LaTeX/Colors
-   
-  This command creates two new commands:
+   colornames in https://en.wikibooks.org/wiki/LaTeX/Colors . This command creates two new commands:
   
   * Lowercase `\name{text-to-delete}{text-to-insert}` for suggesting changes.
   
