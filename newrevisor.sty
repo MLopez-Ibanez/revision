@@ -94,7 +94,7 @@
 \ifREVISOR@hide
 \newcommand{\newrevisor@RevComment}[3][red]{}
 \else\ifREVISOR@inline
-\newcommand\newrevisor@RevComment[3][red]{\begingroup\textbf{\hskip 0pt\color{#1}[#2: #3]}\endgroup}
+\newcommand\newrevisor@RevComment[3][red]{\begingroup\bfseries\hskip 0pt\color{#1}[#2: #3]\endgroup}
 \else
 \newcommand\newrevisor@RevComment[3][red]{\protect\colorfootnote[#1]{{\textbf{[#2: #3]}}}}
 \fi % inline
