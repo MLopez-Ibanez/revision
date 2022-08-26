@@ -125,7 +125,8 @@
 \newcommand\newrevisor@twocolors[3]{%%
   %\colorlet{#1}{#2}%
   \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{\newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%%
-  \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{sm}{
+  
+  \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{sm}{%
     \IfBooleanTF##1%
       % with star: inline
       {\newrevisor@RevInlineComment[#2]{\MakeUppercase{#1}}{##2}}%
@@ -136,7 +137,7 @@
 
 \newcommand\hiderevisor[1]{%%
   \expandafter\renewcommand\csname#1\endcsname[2]{}%%
-  \uppercase{\expandafter\ReNewDocumentCommand\csname#1}\endcsname{so}{}%
+  \uppercase{\expandafter\RenewDocumentCommand\csname#1}\endcsname{so}{}%
 }
 %% Handle different colors for deletion and adding
 \NewDocumentCommand{\newrevisor}{mmO{#2}}{\newrevisor@twocolors{#1}{#2}{#3}}
