@@ -85,6 +85,7 @@
 \fi % hide
 \RequirePackage{todonotes}
 \newcommand{\newrevisor@RevComment}[3][red]{\todo[color=#1!29, bordercolor=#1!47, caption={\textbf{#2}}]{#3}}
+\newcommand{\newrevisor@RevInlineComment}[3][red]{\todo[color=#1!29, bordercolor=#1!47, caption={\textbf{#2}}]{#3}}
 % % some fancy todos
 % % \usepackage[colorinlistoftodos, prependcaption, textwidth=2cm, textsize=tiny]{todonotes}
 % \usepackage[colorinlistoftodos, prependcaption, textwidth=2cm, textsize=tiny]{todonotes}
@@ -108,12 +109,14 @@
 % \newcommand\colorfootnote[2][black]{\renewcommand\@makefnmark{\color{#1}\sv@makefnmark}\footnote{\protect{\color{#1}#2}}\renewcommand\@makefnmark{\sv@makefnmark}}
 % \makeatother
 \ifx\REVISOR@hide\@empty
+\newcommand\newrevisor@RevInlineComment[3][red]{\hskip 0pt\begingroup\color{#1}\footnotesize\bfseries[{\smaller #2}: #3]\endgroup}
 \ifREVISOR@inline
-\newcommand\newrevisor@RevComment[3][red]{\hskip 0pt\begingroup\color{#1}\footnotesize\bfseries[{\smaller #2}: #3]\endgroup}
+\newcommand\newrevisor@RevComment{\newrevisor@RevInlineComment}
 \else
 \newcommand\newrevisor@RevComment[3][red]{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
 \fi % inline
 \else
+\newcommand\newrevisor@RevInlineComment[3][red]{}
 \newcommand{\newrevisor@RevComment}[3][red]{}
 \fi % hide
 \fi % todonotes
@@ -122,13 +125,19 @@
 \newcommand\newrevisor@twocolors[3]{%%
   %\colorlet{#1}{#2}%
   \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{\newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%%
-  \uppercase{\expandafter\newcommand\csname#1}\endcsname[1]{\newrevisor@RevComment[#2]{\MakeUppercase{#1}}{##1}}%%
-}
-\newcommand\hiderevisor[1]{%%
-  \expandafter\renewcommand\csname#1\endcsname[2]{}%%
-  \uppercase{\expandafter\renewcommand\csname#1}\endcsname[1]{}%
+  \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{sm}{
+    \IfBooleanTF##1%
+      % with star: inline
+      {\newrevisor@RevInlineComment[#2]{\MakeUppercase{#1}}{##2}}%
+      % without star: footnote
+      {\newrevisor@RevComment[#2]{\MakeUppercase{#1}}{##2}}%
+    }%%
 }
 
+\newcommand\hiderevisor[1]{%%
+  \expandafter\renewcommand\csname#1\endcsname[2]{}%%
+  \uppercase{\expandafter\ReNewDocumentCommand\csname#1}\endcsname{so}{}%
+}
 %% Handle different colors for deletion and adding
 \NewDocumentCommand{\newrevisor}{mmO{#2}}{\newrevisor@twocolors{#1}{#2}{#3}}
 % First argument is the desired command name, second argument is color for
@@ -136,7 +145,7 @@
 % argument is missing, the second argument is used for both additions and
 % deletions.  See colornames in https://en.wikibooks.org/wiki/LaTeX/Colors
 %
-% Example: Creates lowercase \manuel{}{} and uppercase \MANUEL{}
+% This example creates lowercase \manuel{TEXT-TO-DELETE}{TEXT-TO-ADD} and uppercase \MANUEL{COMMENT TEXT}. Use the starred version \MANUEL*{COMMENT TEXT} to force the comment to be inline (for footnotes, captions, tables, etc.)
 % \newrevisor{manuel}{violet!75}
 % \hiderevisor{manuel}
 
