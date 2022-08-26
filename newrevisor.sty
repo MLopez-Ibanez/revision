@@ -78,54 +78,56 @@
 \fi % no hide
 
 \ifREVISOR@todonotes
-\ifx\REVISOR@hide\@empty
-\PassOptionsToPackage{textsize=tiny,prependcaption}{todonotes}
+  \ifx\REVISOR@hide\@empty
+    \PassOptionsToPackage{textsize=tiny,prependcaption}{todonotes}
+  \else
+    \PassOptionsToPackage{disable}{todonotes}
+  \fi % hide
+  \RequirePackage{todonotes}
+  \newcommand{\newrevisor@RevInlineComment}[3][red]{%
+    \colorlet{tmpcolor}{#1}%
+    \todo[inline,color=tmpcolor!29, bordercolor=tmpcolor!47, caption={\textbf{#2}}]{#3}}
+  \newcommand{\newrevisor@RevComment}[3][red]{%
+    \colorlet{tmpcolor}{#1}%
+    \todo[color=tmpcolor!29, bordercolor=tmpcolor!47, caption={\textbf{#2}}]{#3}}
+  % % some fancy todos
+  % % \usepackage[colorinlistoftodos, prependcaption, textwidth=2cm, textsize=tiny]{todonotes}
+  % \usepackage[colorinlistoftodos, prependcaption, textwidth=2cm, textsize=tiny]{todonotes}
+  % \setuptodonotes{color=blue!29, bordercolor=blue!47}
+  % \newcommandx{\ourtodo}[4][4=,usedefault]{\todo[color=#3!29, inline, bordercolor=#3!47, caption={\textbf{#4} #1}]{#2}}
+  % \newcommand{\nayat}[1]{\ourtodo{Nayat}{#1}{purple}}
+  % \newcommand{\arnaud}[1]{\ourtodo{Arnaud}{#1}{magenta}}
+  % \newcommand{\luis}[1]{\ourtodo{Luis}{#1}{green}}
+  % \newcommand{\manuel}[1]{\ourtodo{Manuel}{#1}{orange}}
+  % \newcommand{\leslie}[1]{\ourtodo{Leslie}{#1}{magenta}}
+  % \newcommand{\pedro}[1]{\ourtodo{Pedro}{#1}{red}}
+  % \newcommand{\suggestion}[1]{\todo[inline, nolist, bordercolor=gray!47, color=gray!29, size=\tiny]{#1}}
 \else
-\PassOptionsToPackage{disable}{todonotes}
-\fi % hide
-\RequirePackage{todonotes}
-\newcommand{\newrevisor@RevComment}[3][red]{\todo[color=#1!29, bordercolor=#1!47, caption={\textbf{#2}}]{#3}}
-\newcommand{\newrevisor@RevInlineComment}[3][red]{\todo[color=#1!29, bordercolor=#1!47, caption={\textbf{#2}}]{#3}}
-% % some fancy todos
-% % \usepackage[colorinlistoftodos, prependcaption, textwidth=2cm, textsize=tiny]{todonotes}
-% \usepackage[colorinlistoftodos, prependcaption, textwidth=2cm, textsize=tiny]{todonotes}
-% \setuptodonotes{color=blue!29, bordercolor=blue!47}
-% \newcommandx{\ourtodo}[4][4=,usedefault]{\todo[color=#3!29, inline, bordercolor=#3!47, caption={\textbf{#4} #1}]{#2}}
-% \newcommand{\nayat}[1]{\ourtodo{Nayat}{#1}{purple}}
-% \newcommand{\arnaud}[1]{\ourtodo{Arnaud}{#1}{magenta}}
-% \newcommand{\luis}[1]{\ourtodo{Luis}{#1}{green}}
-% \newcommand{\manuel}[1]{\ourtodo{Manuel}{#1}{orange}}
-% \newcommand{\leslie}[1]{\ourtodo{Leslie}{#1}{magenta}}
-% \newcommand{\pedro}[1]{\ourtodo{Pedro}{#1}{red}}
-% \newcommand{\suggestion}[1]{\todo[inline, nolist, bordercolor=gray!47, color=gray!29, size=\tiny]{#1}}
-\else
-\let\svthefootnote\thefootnote
-\newcommand\colorfootnote[2][black]{\def\thefootnote{\color{#1}\svthefootnote}%
-  \footnote{\color{#1}#2}\def\thefootnote{\color{black}\svthefootnote}}
-%% TODO: Make this a package option
-%% A different implementation in case the above one does not work, not sure which one is better
-% \makeatletter
-% \let\sv@makefnmark\@makefnmark
-% \newcommand\colorfootnote[2][black]{\renewcommand\@makefnmark{\color{#1}\sv@makefnmark}\footnote{\protect{\color{#1}#2}}\renewcommand\@makefnmark{\sv@makefnmark}}
-% \makeatother
-\ifx\REVISOR@hide\@empty
-\newcommand\newrevisor@RevInlineComment[3][red]{\hskip 0pt\begingroup\color{#1}\footnotesize\bfseries[{\smaller #2}: #3]\endgroup}
-\ifREVISOR@inline
-\newcommand\newrevisor@RevComment{\newrevisor@RevInlineComment}
-\else
-\newcommand\newrevisor@RevComment[3][red]{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
-\fi % inline
-\else
-\newcommand\newrevisor@RevInlineComment[3][red]{}
-\newcommand{\newrevisor@RevComment}[3][red]{}
-\fi % hide
+  \let\svthefootnote\thefootnote
+  \newcommand\colorfootnote[2][black]{\def\thefootnote{\color{#1}\svthefootnote}%
+    \footnote{\color{#1}#2}\def\thefootnote{\color{black}\svthefootnote}}
+  %% TODO: Make this a package option
+  %% A different implementation in case the above one does not work, not sure which one is better
+  % \makeatletter
+  % \let\sv@makefnmark\@makefnmark
+  % \newcommand\colorfootnote[2][black]{\renewcommand\@makefnmark{\color{#1}\sv@makefnmark}\footnote{\protect{\color{#1}#2}}\renewcommand\@makefnmark{\sv@makefnmark}}
+  % \makeatother
+  \ifx\REVISOR@hide\@empty
+    \newcommand\newrevisor@RevInlineComment[3][red]{\hskip 0pt\begingroup\color{#1}\footnotesize\bfseries[{\smaller #2}: #3]\endgroup}
+      \newcommand\newrevisor@RevComment[3][red]{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
+  \else
+    \newcommand\newrevisor@RevInlineComment[3][red]{}
+    \newcommand{\newrevisor@RevComment}[3][red]{}
+  \fi % hide
 \fi % todonotes
+\ifREVISOR@inline
+  \renewcommand\newrevisor@RevComment{\newrevisor@RevInlineComment}
+\fi % inline
 
 % Creates a command for edits in lowercase (delete, add) in lowercase and a command in UPPERCASE for commenting, second argument is a color
 \newcommand\newrevisor@twocolors[3]{%%
   %\colorlet{#1}{#2}%
   \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{\newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%%
-  
   \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{sm}{%
     \IfBooleanTF##1%
       % with star: inline

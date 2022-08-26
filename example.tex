@@ -1,0 +1,55 @@
+\documentclass[a4paper,11pt]{ydoc}
+\usepackage[subpreambles=true]{standalone}
+\lstset{numbers=none,columns=fullflexible}
+\begin{filecontents}{tmp-example-todonotes.tex}
+\documentclass[crop=false]{standalone}
+\usepackage[todonotes]{newrevisor}
+\usepackage{marginnote}
+\let\marginpar\marginnote
+\setlength{\marginparwidth}{3cm}
+\input{example-common}
+\end{filecontents}
+
+\begin{filecontents}{tmp-example-default.tex}
+\documentclass[class=article,crop=false]{standalone}
+\usepackage{newrevisor}
+\input{example-common}
+\end{filecontents}
+
+\begin{document}
+\begin{center}
+\par\noindent
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
+    \usepackage{newrevisor}
+    \newrevisor{manuel}{violet!75}
+    \newrevisor{maria}{blue}
+    \newrevisor{peter}{green!80!black}[red]
+    \begin{document}
+      This is \manuel{text-to-be-deleted}{text-to-be-added}.\MANUEL{This is a note}
+      \footnote{This is a footnote.\MANUEL*{this is a note in the footnote}}
+      
+      This is \maria{text-to-be-deleted}{text-to-be-added}.\MARIA{This is a note}
+      \footnote{This is a footnote.\MARIA*{this is a note in the footnote}}
+      
+      This is \peter{text-to-be-deleted}{text-to-be-added}.\PETER{This is a note}
+      \footnote{This is a footnote.\PETER*{this is a note in the footnote}}
+    \end{document}
+\end{lstlisting}
+\end{minipage}
+
+  \fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default}}
+  \\[2em]
+
+  \begin{minipage}{\textwidth}
+\begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
+    \usepackage[todonotes]{newrevisor}
+\end{lstlisting}
+\end{minipage}
+  \fbox{\includestandalone[width=\linewidth,mode=build]{tmp-example-todonotes}}
+\end{center}
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
