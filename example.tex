@@ -16,9 +16,21 @@
 \input{example-common}
 \end{filecontents}
 
+\begin{filecontents}{tmp-example-default-hide-after.tex}
+\documentclass[class=article,crop=false]{standalone}
+\usepackage[hide=after]{newrevisor}
+\input{example-common}
+\end{filecontents}
+
+\begin{filecontents}{tmp-example-default-hide-before.tex}
+\documentclass[class=article,crop=false]{standalone}
+\usepackage[hide=before]{newrevisor}
+\input{example-common}
+\end{filecontents}
+
 \begin{document}
 \begin{center}
-\par\noindent
+\par\noindent%
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
     \usepackage{newrevisor}
@@ -37,16 +49,43 @@
     \end{document}
 \end{lstlisting}
 \end{minipage}
-
-  \fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default}}
+\fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default}}
   \\[2em]
 
-  \begin{minipage}{\textwidth}
+  \begin{raggedright}
+  Same as above but with option \verb|hide=after|\\[2em]
+\end{raggedright}
+\par\noindent%
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
+    \usepackage[hide=after]{newrevisor}
+\end{lstlisting}
+\end{minipage}
+
+  \fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default-hide-after}}
+  \\[2em]
+
+  \begin{raggedright}
+    Same as above but with option \verb|hide=before|\\[2em]
+  \end{raggedright}
+  
+\par\noindent%
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
+    \usepackage[hide=before]{newrevisor}
+\end{lstlisting}
+\end{minipage}
+
+  \fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default-hide-before}}
+  \\[2em]
+
+\par\noindent%
+\begin{minipage}{\textwidth}
 \begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
     \usepackage[todonotes]{newrevisor}
 \end{lstlisting}
 \end{minipage}
-  \fbox{\includestandalone[width=\linewidth,mode=build]{tmp-example-todonotes}}
+\fbox{\includestandalone[width=\linewidth,mode=build]{tmp-example-todonotes}}
 \end{center}
 \end{document}
 %%% Local Variables:
