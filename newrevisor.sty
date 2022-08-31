@@ -78,18 +78,18 @@
 \fi % no hide
 
 \ifREVISOR@todonotes
-  \ifx\REVISOR@hide\@empty
-    \PassOptionsToPackage{textsize=tiny,prependcaption}{todonotes}
-  \else
-    \PassOptionsToPackage{disable}{todonotes}
-  \fi % hide
   \RequirePackage{todonotes}
-  \newcommand{\newrevisor@RevInlineComment}[3][red]{%
-    \colorlet{tmpcolor}{#1}%
-    \todo[inline,color=tmpcolor!29, bordercolor=tmpcolor!47, caption={\textbf{#2}}]{#3}}
-  \newcommand{\newrevisor@RevComment}[3][red]{%
-    \colorlet{tmpcolor}{#1}%
-    \todo[color=tmpcolor!29, bordercolor=tmpcolor!47, caption={\textbf{#2}}]{#3}}
+  \ifx\REVISOR@hide\@empty
+    \newcommand{\newrevisor@RevInlineComment}[3][red]{%
+      \colorlet{tmpcolor}{#1}%
+      \todo[size=\tiny,inline,color=tmpcolor!29, bordercolor=tmpcolor!47]{\textbf{#2}: #3}}
+    \newcommand{\newrevisor@RevComment}[3][red]{%
+      \colorlet{tmpcolor}{#1}%
+      \todo[size=\tiny,color=tmpcolor!29, bordercolor=tmpcolor!47]{\textbf{#2}: #3}}
+  \else
+    \newcommand{\newrevisor@RevInlineComment}[3][red]{}
+    \newcommand{\newrevisor@RevComment}[3][red]{}
+  \fi % hide
   % % some fancy todos
   % % \usepackage[colorinlistoftodos, prependcaption, textwidth=2cm, textsize=tiny]{todonotes}
   % \usepackage[colorinlistoftodos, prependcaption, textwidth=2cm, textsize=tiny]{todonotes}
@@ -104,7 +104,8 @@
   % \newcommand{\suggestion}[1]{\todo[inline, nolist, bordercolor=gray!47, color=gray!29, size=\tiny]{#1}}
 \else
   \let\svthefootnote\thefootnote
-  \newcommand\colorfootnote[2][black]{\def\thefootnote{\color{#1}\svthefootnote}%
+  \newcommand\colorfootnote[2][black]{%
+    \def\thefootnote{\color{#1}\svthefootnote}%
     \footnote{\color{#1}#2}\def\thefootnote{\color{black}\svthefootnote}}
   %% TODO: Make this a package option
   %% A different implementation in case the above one does not work, not sure which one is better
