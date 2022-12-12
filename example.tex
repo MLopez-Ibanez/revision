@@ -4,8 +4,6 @@
 \begin{filecontents}{tmp-example-todonotes.tex}
 \documentclass[crop=false]{standalone}
 \usepackage[todonotes]{newrevisor}
-\usepackage{marginnote}
-\let\marginpar\marginnote
 \setlength{\marginparwidth}{3cm}
 \input{example-common}
 \end{filecontents}
@@ -31,26 +29,35 @@
 \begin{document}
 \begin{center}
 \par\noindent%
-\begin{minipage}{\textwidth}
-\begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
-    \usepackage{newrevisor}
-    \newrevisor{manuel}{violet!75}
-    \newrevisor{maria}{blue}
-    \newrevisor{peter}{green!80!black}[red]
-    \begin{document}
-      This is \manuel{text-to-be-deleted}{text-to-be-added}.\MANUEL{This is a note}
-      \footnote{This is a footnote.\MANUEL*{this is a note in the footnote}}
+\lstinputlisting[language={[latex]tex},gobble=4,numbers=none,caption={},frame=lines,firstline=2]{example-common.tex}
+%\begin{minipage}{\textwidth}
+%  \begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
+%     \usepackage{newrevisor}
+%     \newrevisor{manuel}{violet!75}
+%     \newrevisor{maria}{blue}
+%     \newrevisor{peter}{green!80!black}[red]
+%     \begin{document}
+%     This is \manuel{text-to-be-deleted}{text-to-be-added}.\MANUEL{This is a note}
+%       \footnote{This is a footnote.\MANUEL*{this is a note in the footnote}}
       
-      This is \maria{text-to-be-deleted}{text-to-be-added}.\MARIA{This is a note}
-      \footnote{This is a footnote.\MARIA*{this is a note in the footnote}}
+%       This is \maria{text-to-be-deleted}{text-to-be-added}.\MARIA{This is a note}
+%       \footnote{This is a footnote.\MARIA*{this is a note in the footnote}}
       
-      This is \peter{text-to-be-deleted}{text-to-be-added}.\PETER{This is a note}
-      \footnote{This is a footnote.\PETER*{this is a note in the footnote}}
-    \end{document}
-\end{lstlisting}
-\end{minipage}
+%       This is \peter{text-to-be-deleted}{text-to-be-added}.\PETER{This is a note}
+%       \footnote{This is a footnote.\PETER*{this is a note in the footnote}}
+
+%       \begin{figure}[h!]
+%         \centering
+%         A FIGURE
+%         \caption{Caption \manuel{and}{with} note\MANUEL*{note}}
+%         \label{fig:test}
+%       \end{figure}
+%     \end{document}
+% \end{lstlisting}
+% \end{minipage}
+\newpage
 \fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default}}
-  \\[2em]
+\newpage
 
   \begin{raggedright}
   Same as above but with option \verb|hide=after|\\[2em]
@@ -61,24 +68,22 @@
     \usepackage[hide=after]{newrevisor}
 \end{lstlisting}
 \end{minipage}
-
-  \fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default-hide-after}}
-  \\[2em]
-
+\fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default-hide-after}}
+\newpage
   \begin{raggedright}
     Same as above but with option \verb|hide=before|\\[2em]
   \end{raggedright}
-  
 \par\noindent%
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
     \usepackage[hide=before]{newrevisor}
 \end{lstlisting}
 \end{minipage}
-
-  \fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default-hide-before}}
-  \\[2em]
-
+\fbox{\includestandalone[width=\textwidth,mode=build]{tmp-example-default-hide-before}}
+\newpage
+  \begin{raggedright}
+    With option \verb|todonotes|\\[2em]
+  \end{raggedright}
 \par\noindent%
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]

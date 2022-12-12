@@ -1,21 +1,8 @@
-% \documentclass{article}
-% \usepackage[todonotes]{newrevisor}
-% \usepackage{marginnote}
-% \let\marginpar\marginnote
-% \setlength{\marginparwidth}{3cm}
-\usepackage[a5paper,paperheight=6cm,left=0cm,right=3.5cm,top=0cm,bottom=0cm,nohead]{geometry}
-% First argument is the desired command name, second argument is color for
-% additions, third optional argument is color for deletions. If the third
-% argument is missing, the second argument is used for both additions and
-% deletions.  See colornames in https://en.wikibooks.org/wiki/LaTeX/Colors
-% This example creates lowercase \manuel{TEXT-TO-DELETE}{TEXT-TO-ADD} and uppercase \MANUEL{COMMENT TEXT}. Use the starred version \MANUEL*{COMMENT TEXT} to force the comment to be inline (for footnotes, captions, tables, etc.)
+\usepackage[a5paper,paperheight=20cm,left=0cm,right=3.5cm,top=0cm,bottom=0cm,nohead]{geometry}
+\hypersetup{colorlinks}
 \newrevisor{manuel}{violet!75}
 \newrevisor{maria}{blue}
 \newrevisor{peter}{green!80!black}[red]
-% \hiderevisor{manuel}
-% \hiderevisor{maria}
-\hypersetup{colorlinks}
-
 \begin{document}
 \thispagestyle{empty}
 This is \manuel{text-to-be-deleted}{text-to-be-added}.\MANUEL{This is a note}
@@ -27,8 +14,24 @@ This is \maria{text-to-be-deleted}{text-to-be-added}.\MARIA{This is a note}
 This is \peter{text-to-be-deleted}{text-to-be-added}.\PETER{This is a note}
 \footnote{This is a footnote.\PETER*{this is a note in the footnote}}
 
+\begin{figure}[h!]
+  \centering
+  A FIGURE
+  \caption{Caption \manuel{and}{with} \PETER{not inline}\MANUEL*{an inline note}}
+\end{figure}
+
+\section[test]{A note in a \peter{chapter}{section} \MANUEL*{inline sorry!} \PETER{fixed}}
+
+Some math:
+\begin{equation}
+  E = \maria{n}{m}c^{\peter{3}{2}} \MANUEL*{Is this correct?}\MARIA{Sure!}
+\end{equation}
+
+\MARIA*{A long note with some bullet points:
+  \begin{itemize}
+  \item Do 1
+  \item Do 2
+    \item Profit!
+    \end{itemize}
+  }
 \end{document}
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:

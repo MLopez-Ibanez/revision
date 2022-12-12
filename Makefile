@@ -1,4 +1,6 @@
-.PHONY: clean
+.PHONY: clean all cleanall
+
+all: cleanall example.pdf
 
 example.pdf: example.tex newrevisor.sty
 	@$(MAKE) clean
@@ -8,3 +10,6 @@ example.pdf: example.tex newrevisor.sty
 
 clean:
 	rm -f tmp-* *.aux *.log *.out *.sta
+
+cleanall: clean
+	rm -f *.pdf
