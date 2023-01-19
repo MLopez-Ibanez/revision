@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{newrevisor}[2022/04/13 v0.4 newrevisor]
+\ProvidesPackage{newrevisor}[2022/12/13 v0.5 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -79,6 +79,11 @@
 
 % FIXME: \sout is not very good. It cannot handle commands within its argument.
 \ifx\REVISOR@hide\@empty
+% Multi-paragraph \sout
+\NewDocumentCommand\hsout{+m}{\let\helpcmd\sout\parhelp#1\par\relax\relax} %<-- new command
+  \long\def\parhelp#1\par#2\relax{%
+    \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
+}
 \DeclareRobustCommand{\mysout}[1]{%
   \LetLtxMacro\origcite\cite%
   \renewcommand{\cite}[2][]{\mbox{\origcite[##1]{##2}}}%
@@ -92,8 +97,8 @@
     \renewcommand{\citep}[2][]{\mbox{\origcitep[##1]{##2}}}%
   }%
   %\makeatother%
-  \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\sout{#1}\fi}{#1}}%
-\DeclareRobustCommand{\newrevisor@SuggestEdit}[4]{{\color{#3}\hypersetup{citecolor=#3}\mysout{#1}}{\color{#4}\hypersetup{citecolor=#4}#2}}%
+  \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\hsout{#1}\fi}{#1}}%
+\NewDocumentCommand{\newrevisor@SuggestEdit}{+m+mmm}{{\color{#3}\hypersetup{citecolor=#3}\mysout{#1}}{\color{#4}\hypersetup{citecolor=#4}#2}}%
 \fi % no hide
 
 \ifREVISOR@todonotes
@@ -138,7 +143,8 @@
   % \newcommand\colorfootnote[2][black]{\renewcommand\@makefnmark{\color{#1}\sv@makefnmark}\footnote{\protect{\color{#1}#2}}\renewcommand\@makefnmark{\sv@makefnmark}}
   % \makeatother
   \ifx\REVISOR@hide\@empty
-    \newcommand\newrevisor@RevInlineComment[3][red]{\hskip 0pt\begingroup\color{#1}\footnotesize\bfseries\textrm{[{\smaller #2}: #3]}\endgroup}
+  \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
+    \hskip 0pt\begingroup\color{#1}\normalfont\footnotesize\bfseries\rmfamily\ifmmode\text{[{\smaller #2}: #3]}\else[{\smaller #2}: #3]\fi\endgroup}
     \newcommand\newrevisor@RevComment[3][red]{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
   \else
     \newcommand\newrevisor@RevInlineComment[3][red]{}
@@ -146,14 +152,14 @@
   \fi % hide
 \fi % todonotes
 \ifREVISOR@inline
-  \renewcommand\newrevisor@RevComment{\newrevisor@RevInlineComment}
+\RenewDocumentCommand\newrevisor@RevComment{\newrevisor@RevInlineComment}
 \fi % inline
 
 % Creates a command for edits in lowercase (delete, add) in lowercase and a command in UPPERCASE for commenting, second argument is a color
 \newcommand\newrevisor@twocolors[3]{%%
   %\colorlet{#1}{#2}%
   \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{\newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%%
-  \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{sm}{%
+  \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{s+m}{%
     \IfBooleanTF##1%
       % with star: inline
       {\newrevisor@RevInlineComment[#2]{\MakeUppercase{#1}}{##2}}%
