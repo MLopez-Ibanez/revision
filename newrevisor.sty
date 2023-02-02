@@ -84,7 +84,7 @@
   \long\def\parhelp#1\par#2\relax{%
     \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
 }
-\DeclareRobustCommand{\mysout}[1]{%
+\NewDocumentCommand{\mysout}{+m}{%
   \LetLtxMacro\origcite\cite%
   \renewcommand{\cite}[2][]{\mbox{\origcite[##1]{##2}}}%
   %\makeatletter%
@@ -152,7 +152,7 @@
   \fi % hide
 \fi % todonotes
 \ifREVISOR@inline
-\RenewDocumentCommand\newrevisor@RevComment{\newrevisor@RevInlineComment}
+  \def\newrevisor@RevComment{\newrevisor@RevInlineComment}
 \fi % inline
 
 % Creates a command for edits in lowercase (delete, add) in lowercase and a command in UPPERCASE for commenting, second argument is a color
