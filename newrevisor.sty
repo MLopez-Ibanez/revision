@@ -144,7 +144,7 @@
   \ifx\REVISOR@hide\@empty
   \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
     \hskip 0pt\begingroup\color{#1}\normalfont\footnotesize\bfseries\rmfamily\ifmmode\text{[{\smaller #2}: #3]}\else[{\smaller #2}: #3]\fi\endgroup}
-    \newcommand\newrevisor@RevComment[3][red]{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
+    \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
   \else
     \newcommand\newrevisor@RevInlineComment[3][red]{}
     \newcommand{\newrevisor@RevComment}[3][red]{}
@@ -169,7 +169,7 @@
 
 \newcommand\hiderevisor[1]{%%
   \expandafter\renewcommand\csname#1\endcsname[2]{}%%
-  \uppercase{\expandafter\RenewDocumentCommand\csname#1}\endcsname{so}{}%
+  \uppercase{\expandafter\RenewDocumentCommand\csname#1}\endcsname{s+m}{}%
 }
 %% Handle different colors for deletion and adding
 \NewDocumentCommand{\newrevisor}{mmO{#2}}{\newrevisor@twocolors{#1}{#2}{#3}}
