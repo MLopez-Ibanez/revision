@@ -178,7 +178,9 @@
 % argument is missing, the second argument is used for both additions and
 % deletions.  See colornames in https://en.wikibooks.org/wiki/LaTeX/Colors
 %
-% This example creates lowercase \manuel{TEXT-TO-DELETE}{TEXT-TO-ADD} and uppercase \MANUEL{COMMENT TEXT}. Use the starred version \MANUEL*{COMMENT TEXT} to force the comment to be inline (for footnotes, captions, tables, etc.)
+% \newrevisor{yourname}{color} creates two new commands:
+% 1: \yourname{TEXT-TO-DELETE}{TEXT-TO-ADD}
+% 2: \YOURNAME{COMMENT TEXT} which adds comments as footnotes. Use the starred version \YOURNAME*{COMMENT TEXT} to make the comment appear within the text (or use the package option "inline" to make all comments appear inline).
 % \newrevisor{manuel}{violet!75}
 % \hiderevisor{manuel}
 
