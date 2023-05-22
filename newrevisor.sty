@@ -83,6 +83,8 @@
     \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
 }
 \NewDocumentCommand{\mysout}{+m}{%
+  \LetLtxMacro\origref\ref% Sometimes \ref produces Extra }, or forgotten \endgroup.
+  \renewcommand{\ref}[1]{\mbox{\origref{##1}}}%
   \LetLtxMacro\origcite\cite%
   \renewcommand{\cite}[2][]{\mbox{\origcite[##1]{##2}}}%
   %\makeatletter%
@@ -99,8 +101,9 @@
   \providecommand{\texorpdfstring}[2]{##1}%
   \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\hsout{#1}\fi}{#1}%
 }
+\NewDocumentCommand{\newrevisor@color}{m}{\color{#1}\providecommand{\hypersetup}[1]{}\hypersetup{citecolor=#1}}
 % \hypersetup requires hyperref
-\NewDocumentCommand{\newrevisor@SuggestEdit}{+m+mmm}{{\providecommand{\hypersetup}[1]{}\color{#3}\hypersetup{citecolor=#3}\mysout{#1}}{\color{#4}\hypersetup{citecolor=#4}#2}}%
+\NewDocumentCommand{\newrevisor@SuggestEdit}{+m+mmm}{{\newrevisor@color{#3}\mysout{#1}}{\newrevisor@color{#4}#2}}%
 \fi % no hide
 
 \ifREVISOR@todonotes
