@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{newrevisor}[2022/12/13 v0.5 newrevisor]
+\ProvidesPackage{newrevisor}[2023/05/12 v0.6 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -32,7 +32,6 @@
 \PassOptionsToPackage{normalem}{ulem}
 \RequirePackage{ulem}
 \RequirePackage{amsmath}
-\RequirePackage{hyperref}
 \RequirePackage{relsize}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
@@ -95,9 +94,13 @@
     \LetLtxMacro\origcitep\citep%
     \renewcommand{\citep}[2][]{\mbox{\origcitep[##1]{##2}}}%
   }%
-  %\makeatother%
-  \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\hsout{#1}\fi}{#1}}%
-\NewDocumentCommand{\newrevisor@SuggestEdit}{+m+mmm}{{\color{#3}\hypersetup{citecolor=#3}\mysout{#1}}{\color{#4}\hypersetup{citecolor=#4}#2}}%
+  % \makeatother%
+  % \texorpdfstring requires hyperref
+  \providecommand{\texorpdfstring}[2]{##1}%
+  \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\hsout{#1}\fi}{#1}%
+}
+% \hypersetup requires hyperref
+\NewDocumentCommand{\newrevisor@SuggestEdit}{+m+mmm}{{\providecommand{\hypersetup}[1]{}\color{#3}\hypersetup{citecolor=#3}\mysout{#1}}{\color{#4}\hypersetup{citecolor=#4}#2}}%
 \fi % no hide
 
 \ifREVISOR@todonotes
