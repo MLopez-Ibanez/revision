@@ -30,8 +30,6 @@
 \RequirePackage{xparse}
 \PassOptionsToPackage{dvipsnames}{xcolor}
 \RequirePackage{xcolor}
-\PassOptionsToPackage{normalem}{ulem}
-\RequirePackage{ulem}
 \RequirePackage{amsmath}
 \RequirePackage{relsize}
 \RequirePackage{kvoptions}
@@ -40,6 +38,7 @@
   prefix=REVISOR@
 }
 \DeclareBoolOption{todonotes} % use todonotes instead of footnotes
+\DeclareBoolOption{soul} % use soul instead of ulem
 \DeclareStringOption{hide}[before] % hide=before hide=after
 \def\REVISOR@before{before}
 \def\REVISOR@after{after}
@@ -60,6 +59,15 @@
     \box\z@}}#1}
 \newcommand{\mathsout}[1]{\ensuremath{\linethrough{#1}}}
 
+\ifREVISOR@soul
+\RequirePackage{soul}
+\let\@sout\st
+\else
+\PassOptionsToPackage{normalem}{ulem}
+\RequirePackage{ulem}
+\let\@sout\sout
+\fi
+
 %% Revision commands
 \ifx\REVISOR@hide\@empty
 \else
@@ -79,7 +87,7 @@
 % FIXME: \sout is not very good. It cannot handle commands within its argument.
 \ifx\REVISOR@hide\@empty
 % Multi-paragraph \sout
-\NewDocumentCommand\hsout{+m}{\let\helpcmd\sout\parhelp#1\par\relax\relax} %<-- new command
+\NewDocumentCommand\hsout{+m}{\let\helpcmd\@sout\parhelp#1\par\relax\relax} %<-- new command
   \long\def\parhelp#1\par#2\relax{%
     \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
 }
