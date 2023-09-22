@@ -1,10 +1,11 @@
 \usepackage[a5paper,paperheight=20cm,left=0cm,right=3.5cm,top=0cm,bottom=0cm,nohead]{geometry}
-\hypersetup{colorlinks}
 \newrevisor{manuel}{violet!75}
 \newrevisor{maria}{blue}
 \newrevisor{peter}{green!80!black}[red]
 \begin{document}
 \thispagestyle{empty}
+\listofchanges%
+
 This is \manuel{text-to-be-deleted}{text-to-be-added}.\MANUEL{This is a note}
 \footnote{This is a footnote.\MANUEL*{this is a note in the footnote}}
 

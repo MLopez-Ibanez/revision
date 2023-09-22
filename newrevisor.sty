@@ -27,6 +27,7 @@
 %% - [ ] Footnotes split across pages lose color. Find a way to keep the color or avoid splitting footnotes.    
 \RequirePackage{iftex}
 \RequirePackage{letltxmacro}
+\RequirePackage{etoolbox} % \csuse
 \RequirePackage{xparse}
 \PassOptionsToPackage{dvipsnames}{xcolor}
 \RequirePackage{xcolor}
@@ -158,7 +159,7 @@
   % \makeatother
   \ifx\REVISOR@hide\@empty
   \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
-    \hskip 0pt\begingroup\color{#1}\normalfont\footnotesize\bfseries\rmfamily\ifmmode\text{[{\smaller #2}: #3]}\else[{\smaller #2}: #3]\fi\endgroup}
+    \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]}\else\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]\fi\endgroup}
     \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
   \else
     \newcommand\newrevisor@RevInlineComment[3][red]{}
@@ -171,9 +172,17 @@
 
 % Creates a command for edits in lowercase (delete, add) in lowercase and a command in UPPERCASE for commenting, second argument is a color
 \newcommand\newrevisor@twocolors[3]{%%
+  \stepcounter{newrevisor@AuthorCount}%
+  \@namedef{newrevisor@AuthorID\thenewrevisor@AuthorCount}{#1}
+ % \expandafter\let\csname newrevisor@AuthorName#1\endcsname=\newrevisor@definechangesauthor@name
+ % \expandafter\let\csname newrevisor@AuthorColor#1\endcsname{#2}
+  \@namedef{newrevisor@AuthorColor#1}{#2}
+  \newcounter{newrevisor@replacedCount#1}
+  \newcounter{newrevisor@commentCount#1}
   %\colorlet{#1}{#2}%
-  \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{\newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%%
+  \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{\stepcounter{newrevisor@replacedCount#1}\newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%%
   \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{s+m}{%
+    \stepcounter{newrevisor@commentCount#1}%
     \IfBooleanTF##1%
       % with star: inline
       {\newrevisor@RevInlineComment[#2]{\MakeUppercase{#1}}{##2}}%
@@ -186,6 +195,64 @@
   \expandafter\renewcommand\csname#1\endcsname[2]{}%%
   \uppercase{\expandafter\RenewDocumentCommand\csname#1}\endcsname{s+m}{}%
 }
+% Implement list of changes: https://gitlab.com/ekleinod/changes/-/raw/main/texmf/tex/latex/changes/changes.sty
+\newcounter{newrevisor@AuthorCount}
+\setcounter{newrevisor@AuthorCount}{0}
+\newcounter{newrevisor@Author}
+
+\def\newrevisor@chopline#1;#2;#3;#4 \\{%
+\def\newrevisor@Inid{#1}%
+\def\newrevisor@Incolor{#2}%
+\def\newrevisor@Inreplaced{#3}%
+\def\newrevisor@Incomment{#4}%
+}
+
+\newcommand{\newrevisor@socextension}{soc}
+%% FIXME: List individual changes with page numbers
+\newcommand{\listofchanges}[1][\@empty]{%
+\section*{List of revisions}
+\IfFileExists{\jobname.\newrevisor@socextension}{%
+  \ifdef{\ifbabelshorthand}{%
+    \ifbabelshorthand{;}{\shorthandoff{;}}{}%
+  }{}%
+  \newread\newrevisor@InFile
+  \openin\newrevisor@InFile = \jobname.\newrevisor@socextension
+  \loop\unless\ifeof\newrevisor@InFile%
+  \read\newrevisor@InFile to \newrevisor@Line%
+  \ifeof\newrevisor@InFile\else%
+  \expandafter\newrevisor@chopline\newrevisor@Line\\%
+  %% FIXME: Use todonotes style.
+  \hspace*{1em}\textbf{\color{\newrevisor@Incolor}\newrevisor@Inid}: \newrevisor@Incomment\ comments, \newrevisor@Inreplaced\ revisions\\
+  \fi%
+  \repeat
+  \closein\newrevisor@InFile%
+  \ifdef{\ifbabelshorthand}{%
+    \ifbabelshorthand{;}{\shorthandon{;}}{}%
+  }{}%
+}{%
+  \emph{Summary of changes is available after the next \LaTeX\ run.}%
+  \PackageWarning{newrevisor}{LaTeX rerun needed for summary of changes}%
+}% \IfFileExists
+}% \listofchanges
+
+\AtEndDocument{%
+\newwrite\newrevisor@OutFile
+\immediate\openout\newrevisor@OutFile = \jobname.\newrevisor@socextension
+\let\newrevisor@protect\protect
+\let\protect\@unexpandable@protect
+\setcounter{newrevisor@Author}{0}
+\loop\unless\ifnum\thenewrevisor@Author = \value{newrevisor@AuthorCount}
+\stepcounter{newrevisor@Author}%
+\def\newrevisor@ID{\csuse{newrevisor@AuthorID\thenewrevisor@Author}}%
+\immediate\write\newrevisor@OutFile{\newrevisor@ID;%
+\csuse{newrevisor@AuthorColor\newrevisor@ID};%
+\the\value{newrevisor@replacedCount\newrevisor@ID};%
+\the\value{newrevisor@commentCount\newrevisor@ID}}%
+\repeat
+\immediate\closeout\newrevisor@OutFile
+\let\protect\newrevisor@protect
+} %\AtEndDocument
+
 %% Handle different colors for deletion and adding
 \NewDocumentCommand{\newrevisor}{mmO{#2}}{\newrevisor@twocolors{#1}{#2}{#3}}
 % First argument is the desired command name, second argument is color for
