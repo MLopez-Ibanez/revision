@@ -24,10 +24,14 @@
 %
 %    See full documentation: https://github.com/MLopez-Ibanez/revision
 %% TODO:
-%% - [ ] Footnotes split across pages lose color. Find a way to keep the color or avoid splitting footnotes.    
+%% - [ ] Footnotes split across pages lose color. Find a way to keep the color or avoid splitting footnotes.
+%% - [ ] Force inline mode in floating environments:
+% \makeatletter   
+% \def\InFloat{\ifnum\@floatpenalty<0\relax in float \else outside float \fi}
+% \makeatother
 \RequirePackage{iftex}
-\RequirePackage{letltxmacro}
-\RequirePackage{etoolbox} % \csuse
+\RequirePackage{letltxmacro} % Replace with https://anorien.csc.warwick.ac.uk/mirrors/CTAN/macros/latex/contrib/l3packages/xparse.pdf
+\RequirePackage{etoolbox} % \csuse \ifdef
 \RequirePackage{xparse}
 \PassOptionsToPackage{dvipsnames}{xcolor}
 \RequirePackage{xcolor}
@@ -49,6 +53,9 @@
 % https://tex.stackexchange.com/questions/110780/remove-macro-from-list-like-lof
 \def\vanishprotect{\ifx\protect\@typeset@protect%
 \expandafter\@firstofone\else\expandafter\@gobble\fi}
+
+%% FIXME: To remove etoolbox
+% \providecommand*{\csuse}[1]{\ifcsname #1\endcsname \csname #1\expandafter \endcsname \fi}
 
 \newcommand{\linethrough}{\mathpalette\@thickbar}
 \newcommand{\@thickbar}[2]{%
@@ -177,12 +184,14 @@
  % \expandafter\let\csname newrevisor@AuthorName#1\endcsname=\newrevisor@definechangesauthor@name
  % \expandafter\let\csname newrevisor@AuthorColor#1\endcsname{#2}
   \@namedef{newrevisor@AuthorColor#1}{#2}
-  \newcounter{newrevisor@replacedCount#1}
-  \newcounter{newrevisor@commentCount#1}
+  \newcounter{newrevisor@locEditCounter#1}%
+  \newcounter{newrevisor@locCommentCounter#1}%
   %\colorlet{#1}{#2}%
-  \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{\stepcounter{newrevisor@replacedCount#1}\newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%%
+  \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{%
+    \newrevisor@addEditToListOfChanges{#1}{#2}%
+    \newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%
   \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{s+m}{%
-    \stepcounter{newrevisor@commentCount#1}%
+    \newrevisor@addCommentToListOfChanges{#1}{#2}%
     \IfBooleanTF##1%
       % with star: inline
       {\newrevisor@RevInlineComment[#2]{\MakeUppercase{#1}}{##2}}%
@@ -200,58 +209,64 @@
 \setcounter{newrevisor@AuthorCount}{0}
 \newcounter{newrevisor@Author}
 
-\def\newrevisor@chopline#1;#2;#3;#4 \\{%
-\def\newrevisor@Inid{#1}%
-\def\newrevisor@Incolor{#2}%
-\def\newrevisor@Inreplaced{#3}%
-\def\newrevisor@Incomment{#4}%
+\newcommand{\newrevisor@locextension}{lor}
+\newcommand{\listofrevisions}[1][List of revisions]{%
+  \@ifundefined{chapter}{\section*{#1}}{\chapter*{#1}}
+  \listofsumchanges{}%
+  \@starttoc{\newrevisor@locextension}%
+} % \listofchanges
+\newcommand{\l@revision}{\@dottedtocline{1}{0em}{2.3em}}
+% #1: Author, #2: Color
+\DeclareRobustCommand{\newrevisorlocEdit}[2]{\stepcounter{newrevisor@locEditCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Suggested edit}
+\DeclareRobustCommand{\newrevisorlocComment}[2]{\stepcounter{newrevisor@locCommentCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Comment}
+\newcommand{\newrevisor@addEditToListOfChanges}[2]{%
+  \phantomsection%
+  \addcontentsline{\newrevisor@locextension}{revision}{\newrevisorlocEdit{#1}{#2}}%
+}
+\newcommand{\newrevisor@addCommentToListOfChanges}[2]{%
+  \phantomsection%
+  \addcontentsline{\newrevisor@locextension}{revision}{\newrevisorlocComment{#1}{#2}}%
 }
 
-\newcommand{\newrevisor@socextension}{soc}
-%% FIXME: List individual changes with page numbers
-\newcommand{\listofchanges}[1][\@empty]{%
-\section*{List of revisions}
-\IfFileExists{\jobname.\newrevisor@socextension}{%
-  \ifdef{\ifbabelshorthand}{%
-    \ifbabelshorthand{;}{\shorthandoff{;}}{}%
-  }{}%
-  \newread\newrevisor@InFile
-  \openin\newrevisor@InFile = \jobname.\newrevisor@socextension
-  \loop\unless\ifeof\newrevisor@InFile%
-  \read\newrevisor@InFile to \newrevisor@Line%
-  \ifeof\newrevisor@InFile\else%
-  \expandafter\newrevisor@chopline\newrevisor@Line\\%
-  %% FIXME: Use todonotes style.
-  \hspace*{1em}\textbf{\color{\newrevisor@Incolor}\newrevisor@Inid}: \newrevisor@Incomment\ comments, \newrevisor@Inreplaced\ revisions\\
-  \fi%
-  \repeat
-  \closein\newrevisor@InFile%
-  \ifdef{\ifbabelshorthand}{%
-    \ifbabelshorthand{;}{\shorthandon{;}}{}%
-  }{}%
-}{%
-  \emph{Summary of changes is available after the next \LaTeX\ run.}%
-  \PackageWarning{newrevisor}{LaTeX rerun needed for summary of changes}%
-}% \IfFileExists
-}% \listofchanges
+\NewDocumentCommand{\newrevisor@locEditEmpty}{mm}{\stepcounter{newrevisor@locEditCounter#1}}
+\NewDocumentCommand{\newrevisor@locCommentEmpty}{mm}{\stepcounter{newrevisor@locCommentCounter#1}}
+\NewDocumentCommand{\juststepcontentsline}{mmmm}{#2}
 
-\AtEndDocument{%
-\newwrite\newrevisor@OutFile
-\immediate\openout\newrevisor@OutFile = \jobname.\newrevisor@socextension
-\let\newrevisor@protect\protect
-\let\protect\@unexpandable@protect
-\setcounter{newrevisor@Author}{0}
-\loop\unless\ifnum\thenewrevisor@Author = \value{newrevisor@AuthorCount}
-\stepcounter{newrevisor@Author}%
-\def\newrevisor@ID{\csuse{newrevisor@AuthorID\thenewrevisor@Author}}%
-\immediate\write\newrevisor@OutFile{\newrevisor@ID;%
-\csuse{newrevisor@AuthorColor\newrevisor@ID};%
-\the\value{newrevisor@replacedCount\newrevisor@ID};%
-\the\value{newrevisor@commentCount\newrevisor@ID}}%
-\repeat
-\immediate\closeout\newrevisor@OutFile
-\let\protect\newrevisor@protect
-} %\AtEndDocument
+\NewDocumentCommand{\listofsumchanges}{}{%
+\IfFileExists{\jobname.\newrevisor@locextension}{%
+  % Loop over the file and increment the counters.
+  \DeclareCommandCopy{\newrevisor@oldlocEdit}{\newrevisorlocEdit}%
+  \DeclareCommandCopy{\newrevisor@oldlocComment}{\newrevisorlocComment}%
+  \DeclareCommandCopy{\oldcontentsline}{\contentsline}%
+  \DeclareCommandCopy{\newrevisorlocEdit}{\newrevisor@locEditEmpty}%
+  \DeclareCommandCopy{\newrevisorlocComment}{\newrevisor@locCommentEmpty}%
+  \DeclareCommandCopy{\contentsline}{\juststepcontentsline}%
+  \newread\newrevisor@InFileX%
+  \openin\newrevisor@InFileX=\jobname.\newrevisor@locextension%
+  \loop\unless\ifeof\newrevisor@InFileX%
+  \read\newrevisor@InFileX to\newrevisor@LineX%
+  \ifx\newrevisor@InFileX\@empty\else%
+  \newrevisor@LineX%
+  \fi%
+  \repeat%
+  \closein\newrevisor@InFileX%
+  \DeclareCommandCopy{\newrevisorlocEdit}{\newrevisor@oldlocEdit}
+  \DeclareCommandCopy{\newrevisorlocComment}{\newrevisor@oldlocComment}
+  \DeclareCommandCopy{\contentsline}{\oldcontentsline}
+  \setcounter{newrevisor@Author}{0}
+  \loop\unless\ifnum\thenewrevisor@Author = \value{newrevisor@AuthorCount}
+  \stepcounter{newrevisor@Author}%
+  \def\newrevisor@ID{\csuse{newrevisor@AuthorID\thenewrevisor@Author}}%
+  \numdef{\newrevisor@InSum}{\value{newrevisor@locEditCounter\newrevisor@ID} + \value{newrevisor@locCommentCounter\newrevisor@ID}}%
+  \ifnumcomp{\newrevisor@InSum}{=}{0}{}{%
+    \noindent\textbf{\color{\csuse{newrevisor@AuthorColor\newrevisor@ID}}\newrevisor@ID}: \the\value{newrevisor@locCommentCounter\newrevisor@ID}\ comments, \the\value{newrevisor@locEditCounter\newrevisor@ID}\ revisions\\
+    }%
+  \repeat% 
+}{%
+  \emph{List of revisions is available after the next \LaTeX\ run.}%
+  \PackageWarning{newrevisor}{LaTeX rerun needed for list of revisions}%
+}% \file_if_exist:nTF
+}% \listofchanges
 
 %% Handle different colors for deletion and adding
 \NewDocumentCommand{\newrevisor}{mmO{#2}}{\newrevisor@twocolors{#1}{#2}{#3}}
