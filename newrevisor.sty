@@ -210,11 +210,15 @@
 \newcounter{newrevisor@Author}
 
 \newcommand{\newrevisor@locextension}{lor}
+\ifx\REVISOR@hide\@empty
 \newcommand{\listofrevisions}[1][List of revisions]{%
   \@ifundefined{chapter}{\section*{#1}}{\chapter*{#1}}
-  \listofsumchanges{}%
+  \listofsumchanges%
   \@starttoc{\newrevisor@locextension}%
-} % \listofchanges
+} % \listofrevisions
+\else%
+\newcommand{\listofrevisions}[1][List of revisions]{}%
+\fi
 \newcommand{\l@revision}{\@dottedtocline{1}{0em}{2.3em}}
 % #1: Author, #2: Color
 \DeclareRobustCommand{\newrevisorlocEdit}[2]{\stepcounter{newrevisor@locEditCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Suggested edit}
