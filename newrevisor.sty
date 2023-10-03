@@ -4,7 +4,7 @@
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
 %
-% This package defines 2 commands:
+% This package defines 3 commands:
 % 
 % 1. `\newrevisor{name}{color-for-insert}[color-for-delete]` where the first
 %    argument is the name of the revisor, second argument is color for additions
@@ -22,13 +22,11 @@
 %    `\newrevisor{name}`, that is, removes comments and suggested deletions and
 %    shows suggested additions without coloring them.
 %
+% 3. \listofrevisions
+%
 %    See full documentation: https://github.com/MLopez-Ibanez/revision
 %% TODO:
 %% - [ ] Footnotes split across pages lose color. Find a way to keep the color or avoid splitting footnotes.
-%% - [ ] Force inline mode in floating environments:
-% \makeatletter   
-% \def\InFloat{\ifnum\@floatpenalty<0\relax in float \else outside float \fi}
-% \makeatother
 \RequirePackage{iftex}
 \RequirePackage{letltxmacro} % Replace with https://anorien.csc.warwick.ac.uk/mirrors/CTAN/macros/latex/contrib/l3packages/xparse.pdf
 \RequirePackage{etoolbox} % \csuse \ifdef
@@ -118,8 +116,8 @@
   \providecommand{\texorpdfstring}[2]{##1}%
   \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\hsout{#1}\fi}{#1}%
 }
-\NewDocumentCommand{\newrevisor@color}{m}{\color{#1}\providecommand{\hypersetup}[1]{}\hypersetup{citecolor=#1}}
 % \hypersetup requires hyperref
+\NewDocumentCommand{\newrevisor@color}{m}{\color{#1}\providecommand{\hypersetup}[1]{}\hypersetup{citecolor=#1}}
 \NewDocumentCommand{\newrevisor@SuggestEdit}{+m+mmm}{{\newrevisor@color{#3}\mysout{#1}}{\newrevisor@color{#4}#2}}%
 \fi % no hide
 
@@ -167,7 +165,8 @@
   \ifx\REVISOR@hide\@empty
   \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
     \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]}\else\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]\fi\endgroup}
-    \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}
+  \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{\ifnum\@floatpenalty<0\relax\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}%
+    \else\newrevisor@RevInlineComment[#1]{#2}{#3}\fi}
   \else
     \newcommand\newrevisor@RevInlineComment[3][red]{}
     \newcommand{\newrevisor@RevComment}[3][red]{}
@@ -224,11 +223,11 @@
 \DeclareRobustCommand{\newrevisorlocEdit}[2]{\stepcounter{newrevisor@locEditCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Suggested edit}
 \DeclareRobustCommand{\newrevisorlocComment}[2]{\stepcounter{newrevisor@locCommentCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Comment}
 \newcommand{\newrevisor@addEditToListOfChanges}[2]{%
-  \phantomsection%
+  %\phantomsection%
   \addcontentsline{\newrevisor@locextension}{revision}{\newrevisorlocEdit{#1}{#2}}%
 }
 \newcommand{\newrevisor@addCommentToListOfChanges}[2]{%
-  \phantomsection%
+  %\phantomsection%
   \addcontentsline{\newrevisor@locextension}{revision}{\newrevisorlocComment{#1}{#2}}%
 }
 
