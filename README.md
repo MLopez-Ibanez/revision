@@ -28,6 +28,7 @@ This package defines 3 commands:
 ## Example:
 
 ```latex
+\usepackage{newrevisor}
 \newrevisor{manuel}{violet!75} 
 % Creates lowercase \manuel{}{} and uppercase \MANUEL{} and \MANUEL*{} (inline version)
 \hiderevisor{manuel} % Modifies the generated commands as described above.
