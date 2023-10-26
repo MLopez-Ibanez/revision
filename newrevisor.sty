@@ -54,7 +54,6 @@
 
 %% FIXME: To remove etoolbox
 % \providecommand*{\csuse}[1]{\ifcsname #1\endcsname \csname #1\expandafter \endcsname \fi}
-
 \newcommand{\linethrough}{\mathpalette\@thickbar}
 \newcommand{\@thickbar}[2]{%
     {\mkern0mu\vbox{
@@ -165,8 +164,9 @@
   \ifx\REVISOR@hide\@empty
   \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
     \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]}\else\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]\fi\endgroup}
-  \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{\ifnum\@floatpenalty<0\relax\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}%
-    \else\newrevisor@RevInlineComment[#1]{#2}{#3}\fi}
+  \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{%
+    \@ifundefined{@captype}{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}%
+    {\newrevisor@RevInlineComment[#1]{#2}{#3}}}
   \else
     \newcommand\newrevisor@RevInlineComment[3][red]{}
     \newcommand{\newrevisor@RevComment}[3][red]{}
