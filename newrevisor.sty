@@ -97,6 +97,9 @@
     \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
 }
 \NewDocumentCommand{\mysout}{+m}{%
+  % Force inline comments when deleting text, otherwise we get weird errors.
+  \LetLtxMacro\origrevcomment\newrevisor@RevComment
+  \let\newrevisor@RevComment\newrevisor@RevInlineComment
   \LetLtxMacro\origref\ref% Sometimes \ref produces Extra }, or forgotten \endgroup.
   \renewcommand{\ref}[1]{\mbox{\origref{##1}}}%
   \LetLtxMacro\origcite\cite%
