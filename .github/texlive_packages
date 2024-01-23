@@ -14,12 +14,13 @@
 # warnings with some packages and errors with others
 # metafont mfware
 amsmath
-pdfpages
-standalone
-relsize
+etoolbox
+geometry
 kvoptions
 marginnote
+pdfpages
+relsize
+standalone
 todonotes
-geometry
-etoolbox
+ulem
 ydoc
