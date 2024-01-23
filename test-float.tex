@@ -1,0 +1,29 @@
+\documentclass[crop=false]{standalone}
+\usepackage{hyperref}
+\usepackage{newrevisor}
+\newrevisor{manuel}{violet!75}
+\newrevisor{maria}{blue}
+\begin{document}
+\thispagestyle{empty}
+\listofrevisions%%
+\newpage
+\begin{figure}
+  \centering
+   A Figure
+  \caption{Test~\MANUEL{within float}}
+\end{figure}
+\newpage
+\begin{table}
+  \caption{Test~\MANUEL{within table caption}}
+    \centering
+    \begin{tabular}{c}
+      In Table~\MARIA{within tabular}
+    \end{tabular}
+\end{table}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

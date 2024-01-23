@@ -1,2 +1,6 @@
 *.sta
-tmp-*
+*.lor
+*.soc
+*.tdo
+test-*.pdf
+
