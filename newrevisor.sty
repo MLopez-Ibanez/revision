@@ -200,6 +200,11 @@
       % without star: footnote
       {\newrevisor@RevComment[#2]{\MakeUppercase{#1}}{##2}}%
     }%%
+  \patchcmd{\@starttoc}
+  {\begingroup}
+  {\begingroup\uppercase{\expandafter\RenewDocumentCommand\csname#1}\endcsname{s+m}{\ignorespaces}}
+  {}{}
+
 }
 
 \newcommand\hiderevisor[1]{%%
