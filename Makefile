@@ -1,8 +1,10 @@
-.PHONY: clean all cleanall
+.PHONY: clean all cleanall example
 
 all: cleanall example.pdf
 
-example.pdf: example.tex newrevisor.sty
+example: example.pdf
+
+example.pdf: example.tex example-common.tex newrevisor.sty
 	@$(MAKE) clean
 	latexmk -pdf "example.tex"
 	@$(MAKE) clean
