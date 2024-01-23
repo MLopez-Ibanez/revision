@@ -52,15 +52,18 @@ check_snapshot() {
         diff -q ${old} ${new} > /dev/null
         if [ $? -ne 0 ]; then
             echo "Error: ${old} and ${new} are different"
-            exit 1
+            ERROR=1
+        else
+            rm -f ${new}
         fi
-        rm -f ${new}
     done
 }
 
+ERROR=0
 for tex in test-*.tex; do
     latexmake "$tex"
     testname=$(basename $tex .tex)
     check_snapshot $testname
 done
+exit $ERROR
 
