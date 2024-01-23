@@ -13,12 +13,13 @@
 # Assuming a 'basic' font set up, metafont is required to avoid
 # warnings with some packages and errors with others
 # metafont mfware
-amsmath
-etoolbox
-geometry
-kvoptions
+# amsmath
+# etoolbox
+# geometry
+# kvoptions
 marginnote
 pdfpages
+pdftoppm
 relsize
 standalone
 todonotes
