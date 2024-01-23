@@ -28,6 +28,11 @@ jobs:
         run: |
           ls -R ${{ github.workspace }}
 
+      - name: Install pdftoppm
+        run: |
+          sudo apt -y update
+          sudo apt -y install poppler-utils
+
       - uses: r-lib/actions/setup-tinytex@v2-branch
         env:
           TINYTEX_INSTALLER: TinyTeX-1
