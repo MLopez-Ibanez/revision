@@ -13,53 +13,13 @@
 # Assuming a 'basic' font set up, metafont is required to avoid
 # warnings with some packages and errors with others
 # metafont mfware
-
-# texliveonfly does not detect the following packages automatically
-# amsfonts
-# amsmath
-# babel-english
-# biber
-# biblatex
-# bigintcalc
-# bitset
-# bookmark
-# caption
-# csquotes
-# enumitem
-# epstopdf-pkg
-# etexcmds
-# fancyhdr
-# fancyvrb
-# fandol
-# framed
-# fvextra
-# gettitlestring
-# graphics
-# hycolor
-# hypdoc
-# hyperref
-# hyphenat
-# infwarerr
-# intcalc
-# kvdefinekeys
-# kvoptions
-# kvsetkeys
-# letltxmacro
-# lineno
-# listings
-# ltxcmds
-# minted
-# oberdiek
-# pdfescape
+amsmath
 pdfpages
-# pdftexcmds
-# pnfss
-# ragged2e
-# refcount
-# rerunfilecheck
-# tools
-# uniquecounter
-# upquote
-# xcolor
-# xkeyval
-# xstring
+standalone
+relsize
+kvoptions
+marginnote
+todonotes
+geometry
+etoolbox
+ydoc
