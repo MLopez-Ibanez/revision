@@ -120,7 +120,7 @@
 }
 % \hypersetup requires hyperref
 \NewDocumentCommand{\newrevisor@color}{m}{\color{#1}\providecommand{\hypersetup}[1]{}\hypersetup{citecolor=#1}}
-\NewDocumentCommand{\newrevisor@SuggestEdit}{+m+mmm}{{\newrevisor@color{#3}\mysout{#1}}{\newrevisor@color{#4}#2}}%
+\NewDocumentCommand{\newrevisor@SuggestEdit}{+m+mmm}{{\newrevisor@color{#3}\mysout{#1}}\allowbreak{\newrevisor@color{#4}#2}}%
 \fi % no hide
 
 \ifREVISOR@todonotes
