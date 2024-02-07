@@ -1,4 +1,4 @@
-.PHONY: clean all cleanall example
+.PHONY: clean all cleanall example test
 
 all: cleanall example.pdf
 
