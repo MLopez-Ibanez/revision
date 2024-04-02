@@ -36,3 +36,6 @@ This package defines 3 commands:
 
 For a more detailed example see: <https://github.com/MLopez-Ibanez/revision/blob/main/example.pdf>
 
+## Limitations
+
+* It is currently not possible to mark `equation` environments for deletion (see issue [#7](https://github.com/MLopez-Ibanez/revision/issues/7)).
