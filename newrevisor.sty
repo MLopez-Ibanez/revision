@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{newrevisor}[2023/05/12 v0.6 newrevisor]
+\ProvidesPackage{newrevisor}[2023/05/12 v0.7 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -153,9 +153,10 @@
   \else
   \RequirePackage{pdfcolfoot} % For colored footnotes split across pages.
   \let\svthefootnote\thefootnote
+  \gdef\infootnote{F}
   \newcommand\colorfootnote[2][black]{%
     \def\thefootnote{\color{#1}\svthefootnote}%
-    \footnote{\color{#1}#2}\def\thefootnote{\color{black}\svthefootnote}}
+    \footnote{\def\infootnote{T}\color{#1}#2\def\infootnote{F}}\def\thefootnote{\color{black}\svthefootnote}}
   %% TODO: Make this a package option
   %% A different implementation in case the above one does not work, not sure which one is better
   % \makeatletter
@@ -166,8 +167,9 @@
   \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
     \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]}\else\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]\fi\endgroup}
   \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{%
+    \if T\infootnote\newrevisor@RevInlineComment[#1]{#2}{#3}\else%
     \@ifundefined{@captype}{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}%
-    {\newrevisor@RevInlineComment[#1]{#2}{#3}}}
+    {\newrevisor@RevInlineComment[#1]{#2}{#3}}\fi}
   \else
     \newcommand\newrevisor@RevInlineComment[3][red]{}
     \newcommand{\newrevisor@RevComment}[3][red]{}

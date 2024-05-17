@@ -36,6 +36,15 @@ This package defines 3 commands:
 
 For a more detailed example see: <https://github.com/MLopez-Ibanez/revision/blob/main/example.pdf>
 
+## ChangeLog
+
+ - 0.7: A comment within a comment creates an inline comment. Example:
+ 
+```latex
+\MANUEL{Creates a footnote\MAURA{Creates an inline comment within the footnote}}
+```
+
+
 ## Limitations
 
 * It is currently not possible to mark `equation` environments for deletion (see issue [#7](https://github.com/MLopez-Ibanez/revision/issues/7)).
