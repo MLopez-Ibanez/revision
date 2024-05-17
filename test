@@ -51,7 +51,7 @@ check_snapshot() {
         fi
         diff -q ${old} ${new} > /dev/null
         if [ $? -ne 0 ]; then
-            echo "Error: ${old} and ${new} are different"
+            echo "Error: ${old} and ${new} are different (use diffimg to visualize the differences)"
             ERROR=1
         else
             rm -f ${new}
