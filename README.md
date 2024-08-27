@@ -6,7 +6,8 @@
   * `inline` : make comments appear inline instead of footnotes or margin notes.
   * `hide=[before|after]`: hide all comments. Furthermore, either keep added text and hide deleted text (`hide=before`) or keep deleted text and hide added text (`hide=after`). Just using `hide` is equivalent to `hide=before`.
   * `soul`: Use package [soul](https://ctan.org/pkg/soul?lang=en) instead of [ulem](https://ctan.org/pkg/ulem?lang=en) for crossing out deleted text. This may be useful if a conflict with another package prevents using the [ulem](https://ctan.org/pkg/ulem?lang=en) package.
-     
+  * `norelsize`: Disable use of the [relsize](https://ctan.org/pkg/relsize?lang=en) package. Useful to keep compatibility with broken LaTeX templates like the one from Wiley.
+  
 ## Usage
 
 This package defines 3 commands:

@@ -31,12 +31,12 @@
 \PassOptionsToPackage{dvipsnames}{xcolor}
 \RequirePackage{xcolor}
 \RequirePackage{amstext} % \text
-\RequirePackage{relsize}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
   family=REVISOR,
   prefix=REVISOR@
 }
+\DeclareBoolOption{norelsize} % norelsize disables use of relsize package for compatibility with broken documentclass
 \DeclareBoolOption{todonotes} % use todonotes instead of footnotes
 \DeclareBoolOption{soul} % use soul instead of ulem
 \DeclareStringOption{hide}[before] % hide=before hide=after
@@ -44,6 +44,13 @@
 \def\REVISOR@after{after}
 \DeclareBoolOption{inline} % inline comments
 \ProcessKeyvalOptions*
+
+\ifREVISOR@norelsize
+\let\newrevisor@smaller\footnotesize % FIXME: Find a better solution without relsize
+\else
+\RequirePackage{relsize}
+\let\newrevisor@smaller\smaller
+\fi
 
 % https://tex.stackexchange.com/questions/110780/remove-macro-from-list-like-lof
 \def\vanishprotect{\ifx\protect\@typeset@protect%
@@ -165,10 +172,10 @@
   % \makeatother
   \ifx\REVISOR@hide\@empty
   \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
-    \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]}\else\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\smaller #2}: #3]\fi\endgroup}
+    \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\newrevisor@smaller #2}: #3]}\else\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\newrevisor@smaller #2}: #3]\fi\endgroup}
   \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{%
     \if T\infootnote\newrevisor@RevInlineComment[#1]{#2}{#3}\else%
-    \@ifundefined{@captype}{\protect\colorfootnote[#1]{{\textbf{[{\smaller #2}: #3]}}}}%
+    \@ifundefined{@captype}{\protect\colorfootnote[#1]{{\textbf{[{\newrevisor@smaller #2}: #3]}}}}%
     {\newrevisor@RevInlineComment[#1]{#2}{#3}}\fi}
   \else
     \newcommand\newrevisor@RevInlineComment[3][red]{}
