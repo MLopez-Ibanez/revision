@@ -49,9 +49,10 @@ check_snapshot() {
             mv $new $old
             continue
         fi
-        diff -q ${old} ${new} > /dev/null
+        perceptualdiff ${old} ${new} > /dev/null
         if [ $? -ne 0 ]; then
             echo "Error: ${old} and ${new} are different (use diffimg to visualize the differences)"
+            perceptualdiff ${old} ${new}
             ERROR=1
         else
             rm -f ${new}
