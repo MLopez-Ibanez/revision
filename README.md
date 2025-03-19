@@ -38,6 +38,8 @@ This package defines 3 commands:
 For a more detailed example see: <https://github.com/MLopez-Ibanez/revision/blob/main/example.pdf>
 
 ## ChangeLog
+ 
+ - 0.8: Fix error when using an edition command within `\title{}`.
 
  - 0.7: A comment within a comment creates an inline comment. Example:
  

@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{newrevisor}[2023/05/12 v0.7 newrevisor]
+\ProvidesPackage{newrevisor}[2025/03/19 v0.8 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -97,13 +97,13 @@
 \ifx\REVISOR@hide\@empty
 % Multi-paragraph \sout
 \NewDocumentCommand\hsout{+m}{\let\helpcmd\@sout\parhelp#1\par\relax\relax} %<-- new command
-  \long\def\parhelp#1\par#2\relax{%
-    \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
+\long\def\parhelp#1\par#2\relax{%
+  \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
 }
 \NewDocumentCommand{\mysout}{+m}{%
   % Force inline comments when deleting text, otherwise we get weird errors.
-  \NewCommandCopy\origrevcomment\newrevisor@RevComment
-  \let\newrevisor@RevComment\newrevisor@RevInlineComment
+  \NewCommandCopy\origrevcomment\newrevisor@RevComment%
+  \let\newrevisor@RevComment\newrevisor@RevInlineComment%
   \NewCommandCopy\origref\ref% Sometimes \ref produces Extra }, or forgotten \endgroup.
   \renewcommand{\ref}[1]{\mbox{\origref{##1}}}%
   \NewCommandCopy\origcite\cite%
@@ -237,12 +237,12 @@
 % #1: Author, #2: Color
 \DeclareRobustCommand{\newrevisorlocEdit}[2]{\stepcounter{newrevisor@locEditCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Suggested edit}
 \DeclareRobustCommand{\newrevisorlocComment}[2]{\stepcounter{newrevisor@locCommentCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Comment}
-\newcommand{\newrevisor@addEditToListOfChanges}[2]{%
-  %\phantomsection%
+\NewDocumentCommand{\newrevisor@addEditToListOfChanges}{mm}{%
+  % \phantomsection%
   \addcontentsline{\newrevisor@locextension}{revision}{\newrevisorlocEdit{#1}{#2}}%
 }
-\newcommand{\newrevisor@addCommentToListOfChanges}[2]{%
-  %\phantomsection%
+\NewDocumentCommand{\newrevisor@addCommentToListOfChanges}{mm}{%
+  % \phantomsection%
   \addcontentsline{\newrevisor@locextension}{revision}{\newrevisorlocComment{#1}{#2}}%
 }
 
