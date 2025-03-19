@@ -1,0 +1,20 @@
+\documentclass[class=article,crop=false]{standalone}
+\usepackage{newrevisor}
+\usepackage[a5paper,paperheight=20cm,left=0cm,right=3.5cm,top=0cm,bottom=0cm,nohead]{geometry}
+\newrevisor{manuel}{violet!75}
+\hiderevisor{manuel}
+\begin{document}
+\thispagestyle{empty}
+\tableofcontents
+\listofrevisions%
+\section{Main\manuel{document}{section}}
+\subsection{Main\manuel{document}{subsection}}
+\section{Another\MANUEL{a comment}}
+\section{Last\MANUEL{another comment}}
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

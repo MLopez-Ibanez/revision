@@ -24,7 +24,7 @@
 %
 % 3. \listofrevisions
 %
-%    See full documentation: https://github.com/MLopez-Ibanez/revision
+% See full documentation: https://github.com/MLopez-Ibanez/revision
 \RequirePackage{iftex}
 \RequirePackage{etoolbox} % \csuse \ifdef
 \RequirePackage{xparse}
@@ -215,7 +215,7 @@
 }
 
 \newcommand\hiderevisor[1]{%%
-  \expandafter\renewcommand\csname#1\endcsname[2]{}%%
+  \expandafter\renewcommand\csname#1\endcsname[2]{##2}%%
   \uppercase{\expandafter\RenewDocumentCommand\csname#1}\endcsname{s+m}{}%
 }
 % Implement list of changes: https://gitlab.com/ekleinod/changes/-/raw/main/texmf/tex/latex/changes/changes.sty
