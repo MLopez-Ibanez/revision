@@ -2,6 +2,7 @@
 set -u
 set -o pipefail
 PATH=/tmp/texlive/bin/x86_64-linux:$PATH
+export TEXINPUTS="$(pwd)/../:${TEXINPUTS:-}"
 
 travis_fold_start() {
     if [ ! -z ${TRAVIS:-} ]; then

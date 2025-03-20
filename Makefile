@@ -1,20 +1,25 @@
-.PHONY: clean all cleanall example test
+.PHONY: clean all example test
 
-all: cleanall example.pdf
+all: clean example.pdf
 
-example: example.pdf
+example:
+	touch example.tex
+	@$(MAKE) example.pdf
 
 example.pdf: example.tex example-common.tex newrevisor.sty
-	@$(MAKE) clean
+	@$(MAKE) test
+	@$(RM) example.pdf
 	latexmk -pdf "example.tex"
 	@$(MAKE) clean
 
 test:
 	@$(MAKE) clean
-	./test
+	cd tests && ./test
 
 clean:
-	rm -f *.aux *.log *.out *.sta *.synctex.gz *.fls
+	@$(RM) -f *.aux *.log *.out *.sta *.synctex.gz *.fls \
+		  tests/*.pdf tests/test/test-*-new-*.png
 
-cleanall: clean
-	rm -f *.pdf
+
+
+
