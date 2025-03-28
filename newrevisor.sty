@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{newrevisor}[2025/03/19 v0.8 newrevisor]
+\ProvidesPackage{newrevisor}[2025/03/28 v0.9 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -101,6 +101,7 @@
   \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
 }
 \NewDocumentCommand{\mysout}{+m}{%
+  \ifstrempty{#1}{}{%
   % Force inline comments when deleting text, otherwise we get weird errors.
   \NewCommandCopy\origrevcomment\newrevisor@RevComment%
   \let\newrevisor@RevComment\newrevisor@RevInlineComment%
@@ -121,6 +122,7 @@
   % \texorpdfstring requires hyperref
   \providecommand{\texorpdfstring}[2]{##1}%
   \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\hsout{#1}\fi}{#1}%
+ }%
 }
 % \hypersetup requires hyperref
 \NewDocumentCommand{\newrevisor@color}{m}{\color{#1}\providecommand{\hypersetup}[1]{}\hypersetup{citecolor=#1}}

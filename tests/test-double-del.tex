@@ -1,0 +1,18 @@
+\documentclass[crop=false]{standalone}
+\usepackage{hyperref}
+\usepackage{newrevisor}
+\newrevisor{manuel}{violet!75}
+\newrevisor{maria}{blue}
+\begin{document}
+\thispagestyle{empty}
+\listofrevisions%%
+
+\section{Section}
+Some text we want to \maria{\manuel{}{double} delete}{\manuel{doble}{double} add}.
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
