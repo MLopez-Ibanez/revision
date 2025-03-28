@@ -21,7 +21,8 @@ travis_fold_end() {
 }
 
 latexclean() {
-    rm -f *.bbl *.aux *.log *.out *.bcf *.blg *.fls *.hd *.fdb_latexmk *.run.xml *.syctex.gz
+    rm -f *.bbl *.aux *.log *.out *.bcf *.blg *.fls *.hd *.fdb_latexmk *.run.xml *.syctex.gz *.loc *.lor *.toc *.tdo *.soc
+    rm -f ../*.bbl ../*.aux ../*.log ../*.out ../*.bcf ../*.blg ../*.fls ../*.hd ../*.fdb_latexmk ../*.run.xml ../*.syctex.gz ../*.loc ../*.lor ../*.toc ../*.tdo ../*.soc
 }
 
 latexmake() {
@@ -37,6 +38,7 @@ latexmake() {
         cat "$LOGFILE"
         exit 1
     fi
+    latexclean
     travis_fold_end latexmk.1
 }
 
