@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{newrevisor}[2025/03/28 v0.9 newrevisor]
+\ProvidesPackage{newrevisor}[2025/03/31 v0.10 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -26,7 +26,7 @@
 %
 % See full documentation: https://github.com/MLopez-Ibanez/revision
 \RequirePackage{iftex}
-\RequirePackage{etoolbox} % \csuse \ifdef
+\RequirePackage{etoolbox} % \csuse \ifdef \ifstrempty
 \RequirePackage{xparse}
 \PassOptionsToPackage{dvipsnames}{xcolor}
 \RequirePackage{xcolor}
@@ -56,7 +56,7 @@
 \def\vanishprotect{\ifx\protect\@typeset@protect%
 \expandafter\@firstofone\else\expandafter\@gobble\fi}
 
-%% FIXME: To remove etoolbox
+%% FIXME: remove etoolbox
 % \providecommand*{\csuse}[1]{\ifcsname #1\endcsname \csname #1\expandafter \endcsname \fi}
 \newcommand{\linethrough}{\mathpalette\@thickbar}
 \newcommand{\@thickbar}[2]{%
@@ -100,29 +100,35 @@
 \long\def\parhelp#1\par#2\relax{%
   \helpcmd{#1}\ifx\relax#2\else\par\parhelp#2\relax\fi%
 }
+\gdef\inmysout{F}
 \NewDocumentCommand{\mysout}{+m}{%
   \ifstrempty{#1}{}{%
-  % Force inline comments when deleting text, otherwise we get weird errors.
-  \NewCommandCopy\origrevcomment\newrevisor@RevComment%
-  \let\newrevisor@RevComment\newrevisor@RevInlineComment%
-  \NewCommandCopy\origref\ref% Sometimes \ref produces Extra }, or forgotten \endgroup.
-  \renewcommand{\ref}[1]{\mbox{\origref{##1}}}%
-  \NewCommandCopy\origcite\cite%
-  \renewcommand{\cite}[2][]{\mbox{\origcite[##1]{##2}}}%
-  %\makeatletter%
-  \@ifundefined{citet}{}{%
-    \NewCommandCopy\origcitet\citet%
-    \renewcommand{\citet}[2][]{\mbox{\origcitet[##1]{##2}}}%
+    \if T\inmysout#1% Double mysout: Just return the deleted text.
+    \else%
+      \def\inmysout{T}%
+      % Force inline comments when deleting text, otherwise we get weird errors.
+      \NewCommandCopy\origrevcomment\newrevisor@RevComment%
+      \let\newrevisor@RevComment\newrevisor@RevInlineComment%
+      \NewCommandCopy\origref\ref% Sometimes \ref produces Extra }, or forgotten \endgroup.
+      \renewcommand{\ref}[1]{\mbox{\origref{##1}}}%
+      \NewCommandCopy\origcite\cite%
+      \renewcommand{\cite}[2][]{\mbox{\origcite[##1]{##2}}}%
+      % \makeatletter%
+      \@ifundefined{citet}{}{%
+        \NewCommandCopy\origcitet\citet%
+        \renewcommand{\citet}[2][]{\mbox{\origcitet[##1]{##2}}}%
+      }%
+      \@ifundefined{citep}{}{%
+        \NewCommandCopy\origcitep\citep%
+        \renewcommand{\citep}[2][]{\mbox{\origcitep[##1]{##2}}}%
+      }%
+      % \makeatother%
+      % \texorpdfstring requires hyperref
+      \providecommand{\texorpdfstring}[2]{##1}%
+      \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\hsout{#1}\fi}{#1}%
+      \def\inmysout{F}%
+    \fi%
   }%
-  \@ifundefined{citep}{}{%
-    \NewCommandCopy\origcitep\citep%
-    \renewcommand{\citep}[2][]{\mbox{\origcitep[##1]{##2}}}%
-  }%
-  % \makeatother%
-  % \texorpdfstring requires hyperref
-  \providecommand{\texorpdfstring}[2]{##1}%
-  \texorpdfstring{\ifmmode\text{\mathsout{#1}}\else\hsout{#1}\fi}{#1}%
- }%
 }
 % \hypersetup requires hyperref
 \NewDocumentCommand{\newrevisor@color}{m}{\color{#1}\providecommand{\hypersetup}[1]{}\hypersetup{citecolor=#1}}
