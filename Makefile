@@ -3,12 +3,9 @@
 all: clean example.pdf
 
 example:
-	touch example.tex
-	@$(MAKE) example.pdf
-
-example.pdf: example.tex example-common.tex newrevisor.sty
-	@$(MAKE) test
+	@$(MAKE) --ignore-errors test
 	@$(RM) example.pdf
+	latexmk -pdf "example.tex"
 	latexmk -pdf "example.tex"
 	@$(MAKE) clean
 

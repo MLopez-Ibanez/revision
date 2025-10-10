@@ -16,19 +16,23 @@ This is \maria{text-to-be-deleted}{text-to-be-added}.\MARIA{This is a note}
 This is \peter{text-to-be-deleted}{text-to-be-added}.\PETER{This is a note}
 \footnote{This is a footnote.\PETER*{this is a note in the footnote}}
 
-\peter{Old line 1\par Old line 2}{New line 1\par New line 2}
+\peter{Old line 1\par Old line 2}{New line 1\par New line 2}  \MANUEL{\label{comment:nested} Can comments be nested like replies?
+    \PETER{I am not sure? \MARIA{Sure they can!}}}
 
 \begin{figure}[h!]
   \centering
   A FIGURE
-  \caption{Caption \manuel{and}{with} \PETER{not inline}\MANUEL*{an inline note}}
+  \caption{Caption \manuel{and}{with} \PETER{forced inline because within caption}
+    \MANUEL*{inline because of *}}
 \end{figure}
 
-\section[test]{A note in a \peter{chapter}{section} \MANUEL*{inline sorry!} \PETER{fixed}}
+\section[test]{A note in a \peter{chapter}{section} \MANUEL*{inline!} \PETER{not inline}}
 
 Some math:
-\begin{equation}
-  E = \maria{n}{m}c^{\peter{3}{2}} \MANUEL*{Is this correct?}\MARIA{Sure!}
+\begin{equation}\label{eq:equation}
+  E = \maria{n}{m}c^{\peter{3}{2}}
+\PETER*{Same question as in Comment \ref{comment:nested}
+    on page \pageref{comment:nested} \MANUEL{Maria answered! \MARIA{Yes, I did!}}}
 \end{equation}
 
 \MARIA*{A long note with some bullet points:
@@ -38,4 +42,5 @@ Some math:
     \item Profit!
     \end{itemize}
   }
+
 \end{document}

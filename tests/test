@@ -43,18 +43,20 @@ latexmake() {
 }
 
 check_snapshot() {
+    # FIXME: This doesn't work if name is not within the current folder.
     name=$1
     pdftoppm -scale-to 800 -png ${name}.pdf ${name}-new
     for new in ${name}-new-*.png; do
         old=${new//"-new"}
         if [ ! -e $old ]; then
-            echo "Warning: $old does not exist, creating it now"
+            echo "WARNING: $old does not exist, creating it now"
             mv $new $old
             continue
         fi
         perceptualdiff ${old} ${new} > /dev/null
         if [ $? -ne 0 ]; then
-            echo "Error: ${old} and ${new} are different (use diffimg to visualize the differences)"
+            echo "ERROR: ${old} and ${new} are different!!!"
+            echo "note: use diffimg test/${old} test/${new} or visual_diff.R with \"test/${old}\""
             perceptualdiff ${old} ${new}
             ERROR=1
         else

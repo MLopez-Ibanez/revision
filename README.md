@@ -30,9 +30,17 @@ This package defines 3 commands:
 
 ```latex
 \usepackage{newrevisor}
-\newrevisor{manuel}{violet!75} 
-% Creates lowercase \manuel{}{} and uppercase \MANUEL{} and \MANUEL*{} (inline version)
-\hiderevisor{manuel} % Modifies the generated commands as described above.
+\newrevisor{manuel}{red!75} 
+\newrevisor{maria}{green!75} 
+% Creates lowercase \manuel{}{} for marking edits and uppercase \MANUEL{} and \MANUEL*{} (inline version) for comments.
+% \hiderevisor{manuel} % Modifies the generated commands as described above.
+\begin{document}
+
+Then in a sentence you can you use \manuel{text-marked-for-deletion}{text-marked-for-insertion} and you can also add comments.\MANUEL{\label{comment:this} This is a comment\MARIA{Nested comment (a reply)}}
+
+And more text.\MANUEL*{This is an inline comment. See my comment \ref{comment:this} on \pageref{comment:this}.}
+
+\end{document}
 ```
 
 For a more detailed example see: <https://github.com/MLopez-Ibanez/revision/blob/main/example.pdf>
