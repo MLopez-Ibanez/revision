@@ -59,3 +59,11 @@ For a more detailed example see: <https://github.com/MLopez-Ibanez/revision/blob
 ## Limitations
 
 * It is currently not possible to mark `equation` environments for deletion (see issue [#7](https://github.com/MLopez-Ibanez/revision/issues/7)).
+
+* It is not possible to mark a `\section` (or `\subsection` or `\paragraph`) command for deletion (see issue [#9](https://github.com/MLopez-Ibanez/revision/issues/9)). The workaround is to mark the text inside the section:
+```latex
+# This doesn't work
+\manuel{\section{Old}}{\section{New}}
+# This should work
+\section{\manuel{Old}{New}}
+```
