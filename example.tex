@@ -69,6 +69,17 @@
 \end{lstlisting}
 \end{minipage}
 \includepdf[frame,width=\textwidth,pages=-]{tests/test-todonotes.pdf}
+\newpage
+  \begin{raggedright}
+    With option \verb|pretty|\\[2em]
+  \end{raggedright}
+\par\noindent%
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language={[latex]tex},gobble=4,frame=lines,caption={},numbers=none]
+    \usepackage[pretty]{newrevisor}
+\end{lstlisting}
+\end{minipage}
+\includepdf[frame,width=\textwidth,pages=-]{tests/test-pretty.pdf}
 \end{center}
 \end{document}
 %%% Local Variables:
