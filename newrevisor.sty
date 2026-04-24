@@ -36,6 +36,7 @@
   family=REVISOR,
   prefix=REVISOR@
 }
+\DeclareBoolOption{pretty} % Use pretty comments
 \DeclareBoolOption{norelsize} % norelsize disables use of relsize package for compatibility with broken documentclass
 \DeclareBoolOption{todonotes} % use todonotes instead of footnotes
 \DeclareBoolOption{soul} % use soul instead of ulem
@@ -50,6 +51,12 @@
 \else
 \RequirePackage{relsize}
 \let\newrevisor@smaller\smaller
+\fi
+
+\ifREVISOR@todonotes%
+  \ifREVISOR@pretty%
+    \PackageError{\@currname}{'todonotes' and 'pretty' do not make sense together}
+  \fi
 \fi
 
 % https://tex.stackexchange.com/questions/110780/remove-macro-from-list-like-lof
@@ -136,6 +143,7 @@
 \fi % no hide
 
 \ifREVISOR@todonotes
+  \NewDocumentCommand\newrevisor@TextComment{m+m}{\textbf{\MakeUppercase{#2}}: #3}
   \RequirePackage{todonotes}
   \RequirePackage{marginnote}
   \let\marginpar\marginnote
@@ -143,12 +151,12 @@
     \newcommand{\newrevisor@RevInlineComment}[3][red]{%
       \colorlet{tmpcolor}{#1}%
       % caption={} allows itemize
-      \ifmmode\vanishprotect{\text{\todo[size=\tiny,inline,caption={},color=tmpcolor!29,bordercolor=tmpcolor!47]{\textbf{#2}: #3}}}%
-      \else\vanishprotect{\todo[size=\tiny,inline,caption={},color=tmpcolor!29,bordercolor=tmpcolor!47]{\textbf{#2}: #3}}\fi}%
+      \ifmmode\vanishprotect{\text{\todo[size=\tiny,inline,caption={},color=tmpcolor!29,bordercolor=tmpcolor!47]{\newrevisor@TextComment{#2}{#3}}}}%
+      \else\vanishprotect{\todo[size=\tiny,inline,caption={},color=tmpcolor!29,bordercolor=tmpcolor!47]{\newrevisor@TextComment{#2}{#3}}}\fi}%
     \newcommand{\newrevisor@RevComment}[3][red]{%
       \colorlet{tmpcolor}{#1}%
-      \ifmmode\vanishprotect{\text{\todo[size=\tiny,color=tmpcolor!29, bordercolor=tmpcolor!47]{\textbf{#2}: #3}}}%
-      \else\vanishprotect{\todo[size=\tiny,color=tmpcolor!29, bordercolor=tmpcolor!47]{\textbf{#2}: #3}}\fi}
+      \ifmmode\vanishprotect{\text{\todo[size=\tiny,color=tmpcolor!29, bordercolor=tmpcolor!47]{\newrevisor@TextComment{#2}{#3}}}}%
+      \else\vanishprotect{\todo[size=\tiny,color=tmpcolor!29, bordercolor=tmpcolor!47]{\newrevisor@TextComment{#2}{#3}}}\fi}
   \else
     \newcommand{\newrevisor@RevInlineComment}[3][red]{}
     \newcommand{\newrevisor@RevComment}[3][red]{}
@@ -165,7 +173,13 @@
   % \newcommand{\leslie}[1]{\ourtodo{Leslie}{#1}{magenta}}
   % \newcommand{\pedro}[1]{\ourtodo{Pedro}{#1}{red}}
   % \newcommand{\suggestion}[1]{\todo[inline, nolist, bordercolor=gray!47, color=gray!29, size=\tiny]{#1}}
-  \else
+  \else % NOT todonotes
+    \ifREVISOR@pretty%
+      \NewDocumentCommand\newrevisor@TextComment{O{red}m+m}{%
+        \colorbox{#1}{\normalfont\bfseries\sffamily\scriptsize\textcolor{white}{\MakeUppercase #2}}\textcolor{#1}{\normalfont\sffamily\ensuremath{[}\nolinebreak\textit{#3}\nolinebreak\ensuremath{]}}}
+    \else%
+      \NewDocumentCommand\newrevisor@TextComment{O{red}m+m}{[{\newrevisor@smaller\MakeUppercase{#2}}: #3]}
+    \fi
   \RequirePackage{pdfcolfoot} % For colored footnotes split across pages.
   \let\svthefootnote\thefootnote
   \gdef\infootnote{F}
@@ -180,10 +194,11 @@
   % \makeatother
   \ifx\REVISOR@hide\@empty
   \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
-    \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\newrevisor@smaller #2}: #3]}\else\color{#1}\normalfont\footnotesize\bfseries\rmfamily[{\newrevisor@smaller #2}: #3]\fi\endgroup}
+    \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily\newrevisor@TextComment[#1]{#2}{#3}}%
+    \else\color{#1}\normalfont\footnotesize\bfseries\rmfamily\newrevisor@TextComment[#1]{#2}{#3}\fi\endgroup}
   \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{%
     \if T\infootnote\newrevisor@RevInlineComment[#1]{#2}{#3}\else%
-    \@ifundefined{@captype}{\protect\colorfootnote[#1]{{\textbf{[{\newrevisor@smaller #2}: #3]}}}}%
+    \@ifundefined{@captype}{\protect\colorfootnote[#1]{{\textbf{\newrevisor@TextComment[#1]{#2}{#3}}}}}%
     {\newrevisor@RevInlineComment[#1]{#2}{#3}}\fi}
   \else
     \newcommand\newrevisor@RevInlineComment[3][red]{}
@@ -211,9 +226,9 @@
     \newrevisor@addCommentToListOfChanges{#1}{#2}%
     \IfBooleanTF##1%
       % with star: inline
-      {\newrevisor@RevInlineComment[#2]{\MakeUppercase{#1}}{##2}}%
+      {\newrevisor@RevInlineComment[#2]{#1}{##2}}%
       % without star: footnote
-      {\newrevisor@RevComment[#2]{\MakeUppercase{#1}}{##2}}%
+      {\newrevisor@RevComment[#2]{#1}{##2}}%
     }%%
   \patchcmd{\@starttoc}
   {\begingroup}

@@ -2,6 +2,7 @@
 
 ## Options
 
+  * `pretty`: Make comments a bit prettier (without `todonotes`).
   * `todonotes`: Use package `todonotes` to create comments instead of footnotes.
   * `inline` : make comments appear inline instead of footnotes or margin notes.
   * `hide=[before|after]`: hide all comments. Furthermore, either keep added text and hide deleted text (`hide=before`) or keep deleted text and hide added text (`hide=after`). Just using `hide` is equivalent to `hide=before`.
