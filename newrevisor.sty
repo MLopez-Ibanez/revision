@@ -143,7 +143,7 @@
 \fi % no hide
 
 \ifREVISOR@todonotes
-  \NewDocumentCommand\newrevisor@TextComment{m+m}{\textbf{\MakeUppercase{#2}}: #3}
+  \NewDocumentCommand\newrevisor@TextComment{O{red}m+m}{\textbf{\MakeUppercase{#2}}: #3}
   \RequirePackage{todonotes}
   \RequirePackage{marginnote}
   \let\marginpar\marginnote
@@ -176,7 +176,7 @@
   \else % NOT todonotes
     \ifREVISOR@pretty%
       \NewDocumentCommand\newrevisor@TextComment{O{red}m+m}{%
-        \colorbox{#1}{\normalfont\bfseries\sffamily\scriptsize\textcolor{white}{\MakeUppercase #2}}\textcolor{#1}{\normalfont\sffamily\ensuremath{[}\nolinebreak\textit{#3}\nolinebreak\ensuremath{]}}}
+        \colorbox{#1}{\normalfont\bfseries\sffamily\scriptsize\textcolor{white}{\MakeUppercase #2}}{\color{#1}\normalfont\sffamily\ensuremath{[}\nobreak{\itshape #3}\nobreak\ensuremath{]}}}
     \else%
       \NewDocumentCommand\newrevisor@TextComment{O{red}m+m}{[{\newrevisor@smaller\MakeUppercase{#2}}: #3]}
     \fi
