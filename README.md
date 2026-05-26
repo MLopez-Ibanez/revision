@@ -47,6 +47,8 @@ And more text.\MANUEL*{This is an inline comment. See my comment \ref{comment:th
 For a more detailed example see: <https://github.com/MLopez-Ibanez/revision/blob/main/example.pdf>
 
 ## ChangeLog
+
+ - 0.11: `pretty` option
  
  - 0.8: Fix error when using an edition command within `\title{}`.
 
