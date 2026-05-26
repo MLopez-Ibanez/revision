@@ -49,6 +49,10 @@ For a more detailed example see: <https://github.com/MLopez-Ibanez/revision/blob
 ## ChangeLog
 
  - 0.11: `pretty` option
+
+ - 0.10: Handle nested deletions.
+ 
+ - 0.9: `norelsize` option.
  
  - 0.8: Fix error when using an edition command within `\title{}`.
 
