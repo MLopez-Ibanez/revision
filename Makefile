@@ -17,6 +17,8 @@ clean:
 	@$(RM) -f *.aux *.log *.out *.sta *.synctex.gz *.fls \
 		  tests/*.pdf tests/test/test-*-new-*.png
 
+updatediffs:
+	rename --verbose --force 's/-new-/-/' tests/test-*-new-?.png
 
 
 
