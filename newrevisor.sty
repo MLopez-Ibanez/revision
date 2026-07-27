@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{newrevisor}[2026/05/26 v0.11 newrevisor]
+\ProvidesPackage{newrevisor}[2026/07/27 v0.12 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -193,9 +193,12 @@
   % \newcommand\colorfootnote[2][black]{\renewcommand\@makefnmark{\color{#1}\sv@makefnmark}\footnote{\protect{\color{#1}#2}}\renewcommand\@makefnmark{\sv@makefnmark}}
   % \makeatother
   \ifx\REVISOR@hide\@empty
-  \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
-    \hskip 0pt\begingroup\ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily\newrevisor@TextComment[#1]{#2}{#3}}%
-    \else\color{#1}\normalfont\footnotesize\bfseries\rmfamily\newrevisor@TextComment[#1]{#2}{#3}\fi\endgroup}
+    \NewDocumentCommand\newrevisor@RevInlineComment{O{red}m+m}{%
+      \hskip 0pt\begingroup%
+      % All comments inside an inline comment also become inline.
+      \let\newrevisor@RevComment\newrevisor@RevInlineComment%
+      \ifmmode\text{\color{#1}\normalfont\footnotesize\bfseries\rmfamily\newrevisor@TextComment[#1]{#2}{#3}}%
+      \else\color{#1}\normalfont\footnotesize\bfseries\rmfamily\newrevisor@TextComment[#1]{#2}{#3}\fi\endgroup}
   \NewDocumentCommand\newrevisor@RevComment{O{red}m+m}{%
     \if T\infootnote\newrevisor@RevInlineComment[#1]{#2}{#3}\else%
     \@ifundefined{@captype}{\protect\colorfootnote[#1]{{\textbf{\newrevisor@TextComment[#1]{#2}{#3}}}}}%

@@ -48,6 +48,8 @@ For a more detailed example see: <https://github.com/MLopez-Ibanez/revision/blob
 
 ## ChangeLog
 
+ - 0.12: Within an inline comment all comments are inline.
+ 
  - 0.11: `pretty` option
 
  - 0.10: Handle nested deletions.
