@@ -56,7 +56,8 @@ check_snapshot() {
         perceptualdiff ${old} ${new} > /dev/null
         if [ $? -ne 0 ]; then
             echo "ERROR: ${old} and ${new} are different!!!"
-            echo "note: use diffimg test/${old} test/${new} or visual_diff.R with \"test/${old}\""
+            echo "note: diffimg tests/${old} tests/${new}"
+            echo "note: ./visual_diff.R \"test/${old}\""
             perceptualdiff ${old} ${new}
             ERROR=1
         else
