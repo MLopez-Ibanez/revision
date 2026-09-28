@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}
 % Date MUST follow YYYY/MM/DD using leading zeroes if needed!
-\ProvidesPackage{newrevisor}[2026/10/05 v0.14 newrevisor]
+\ProvidesPackage{newrevisor}[2026/10/11 v0.15 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -242,33 +242,59 @@
   \def\newrevisor@RevComment{\newrevisor@RevInlineComment}
 \fi % inline
 
+\newif\ifnewrevisor@readinglist
+\newrevisor@readinglistfalse
+
 % Creates a command for edits in lowercase (delete, add) in lowercase and a command in UPPERCASE for commenting, second argument is a color
 \newcommand\newrevisor@twocolors[3]{%%
   \stepcounter{newrevisor@AuthorCount}%
   \@namedef{newrevisor@AuthorID\thenewrevisor@AuthorCount}{#1}
- % \expandafter\let\csname newrevisor@AuthorName#1\endcsname=\newrevisor@definechangesauthor@name
- % \expandafter\let\csname newrevisor@AuthorColor#1\endcsname{#2}
-  \@namedef{newrevisor@AuthorColor#1}{#2}
+  \@namedef{newrevisor@AuthorColor#1}{#2}%
   \newcounter{newrevisor@locEditCounter#1}%
   \newcounter{newrevisor@locCommentCounter#1}%
-  %\colorlet{#1}{#2}%
-  \expandafter\DeclareRobustCommand\csname#1\endcsname[2]{%
-    \newrevisor@addEditToListOfChanges{#1}{#2}%
-    \newrevisor@SuggestEdit{##1}{##2}{#3}{#2}}%
-  \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{s+m}{%
-    \newrevisor@addCommentToListOfChanges{#1}{#2}%
-    \IfBooleanTF##1%
-      % with star: inline
-      {\newrevisor@RevInlineComment[#2]{#1}{##2}}%
-      % without star: footnote
-      {\newrevisor@RevComment[#2]{#1}{##2}}%
-    }%%
-  \patchcmd{\@starttoc}
-  {\begingroup}
-  {\begingroup\uppercase{\expandafter\RenewDocumentCommand\csname#1}\endcsname{s+m}{\ignorespaces}}
-  {}{}
 
-}
+  % ----------------------------------------------------------
+  % Lowercase command:
+  %   \name{deleted}{inserted}
+  %
+  % +m+m makes both arguments long, so \par is allowed.
+  %
+  % When an auxiliary file is being read, do not record a new
+  % revision; retain only the inserted text.
+  % ----------------------------------------------------------
+  \expandafter\NewDocumentCommand\csname#1\endcsname{+m+m}{%
+    \ifnewrevisor@readinglist
+      ##2%
+    \else
+      \newrevisor@addEditToListOfChanges{#1}{#2}%
+      \newrevisor@SuggestEdit{##1}{##2}{#3}{#2}%
+    \fi
+  }%
+
+  % ----------------------------------------------------------
+  % Uppercase command:
+  %   \NAME{comment}
+  %   \NAME*{comment}
+  %
+  % xparse handles the optional star safely, including inside
+  % captions and other moving arguments.
+  %
+  % When an auxiliary file is being read, consume the command
+  % without creating another .lor entry.
+  % ----------------------------------------------------------
+  \uppercase{\expandafter\NewDocumentCommand\csname#1}\endcsname{s+m}{%
+      \ifnewrevisor@readinglist
+        \ignorespaces
+      \else
+        \newrevisor@addCommentToListOfChanges{#1}{#2}%
+        \IfBooleanTF##1{%
+          \newrevisor@RevInlineComment[#2]{#1}{##2}%
+        }{%
+          \newrevisor@RevComment[#2]{#1}{##2}%
+        }%
+      \fi
+    }%
+}%
 
 \newcommand\hiderevisor[1]{%%
   \expandafter\renewcommand\csname#1\endcsname[2]{##2}%%
@@ -281,18 +307,30 @@
 
 \newcommand{\newrevisor@locextension}{lor}
 \ifx\REVISOR@hide\@empty
-\newcommand{\listofrevisions}[1][List of revisions]{%
-  \@ifundefined{chapter}{\section*{#1}}{\chapter*{#1}}
-  \listofsumchanges%
-  \@starttoc{\newrevisor@locextension}%
-} % \listofrevisions
-\else%
-\newcommand{\listofrevisions}[1][List of revisions]{}%
+  \AddToHook{cmd/@starttoc/before}{%
+    \newrevisor@readinglisttrue
+  }
+  \AddToHook{cmd/@starttoc/after}{%
+    \newrevisor@readinglistfalse
+  }
+  \newcommand{\listofrevisions}[1][List of revisions]{%
+    \@ifclassloaded{acmart}{%
+      \@starttoc{\newrevisor@locextension}{#1}%
+      \listofsumchanges
+    }{%
+      \@ifundefined{chapter}{\section*{#1}}{\chapter*{#1}}
+      \listofsumchanges%
+      \@starttoc{\newrevisor@locextension}%
+    }%
+  }
+\else
+  \newcommand{\listofrevisions}[1][List of revisions]{}
 \fi
+
 \newcommand{\l@revision}{\@dottedtocline{1}{0em}{2.3em}}
 % #1: Author, #2: Color
-\DeclareRobustCommand{\newrevisorlocEdit}[2]{\stepcounter{newrevisor@locEditCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Suggested edit}
-\DeclareRobustCommand{\newrevisorlocComment}[2]{\stepcounter{newrevisor@locCommentCounter#1}\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Comment}
+\DeclareRobustCommand{\newrevisorlocEdit}[2]{\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Suggested edit}
+\DeclareRobustCommand{\newrevisorlocComment}[2]{\fcolorbox{black}{#2}{\textcolor{#2}{o}}\ \textbf{#1}: Comment}
 \NewDocumentCommand{\newrevisor@addEditToListOfChanges}{mm}{%
   % \phantomsection%
   \addcontentsline{\newrevisor@locextension}{revision}{\newrevisorlocEdit{#1}{#2}}%
@@ -304,43 +342,59 @@
 
 \NewDocumentCommand{\newrevisor@locEditEmpty}{mm}{\stepcounter{newrevisor@locEditCounter#1}}
 \NewDocumentCommand{\newrevisor@locCommentEmpty}{mm}{\stepcounter{newrevisor@locCommentCounter#1}}
-\NewDocumentCommand{\juststepcontentsline}{mmmm}{#2}
+\NewDocumentCommand{\newrevisor@juststepcontentsline}{mmmm}{#2}
 
 \NewDocumentCommand{\listofsumchanges}{}{%
-\IfFileExists{\jobname.\newrevisor@locextension}{%
-  % Loop over the file and increment the counters.
-  \DeclareCommandCopy{\newrevisor@oldlocEdit}{\newrevisorlocEdit}%
-  \DeclareCommandCopy{\newrevisor@oldlocComment}{\newrevisorlocComment}%
-  \DeclareCommandCopy{\oldcontentsline}{\contentsline}%
-  \DeclareCommandCopy{\newrevisorlocEdit}{\newrevisor@locEditEmpty}%
-  \DeclareCommandCopy{\newrevisorlocComment}{\newrevisor@locCommentEmpty}%
-  \DeclareCommandCopy{\contentsline}{\juststepcontentsline}%
-  \newread\newrevisor@InFileX%
-  \openin\newrevisor@InFileX=\jobname.\newrevisor@locextension%
-  \loop\unless\ifeof\newrevisor@InFileX%
-  \read\newrevisor@InFileX to\newrevisor@LineX%
-  \ifx\newrevisor@InFileX\@empty\else%
-  \newrevisor@LineX%
-  \fi%
-  \repeat%
-  \closein\newrevisor@InFileX%
-  \DeclareCommandCopy{\newrevisorlocEdit}{\newrevisor@oldlocEdit}
-  \DeclareCommandCopy{\newrevisorlocComment}{\newrevisor@oldlocComment}
-  \DeclareCommandCopy{\contentsline}{\oldcontentsline}
-  \setcounter{newrevisor@Author}{0}
-  \loop\unless\ifnum\thenewrevisor@Author = \value{newrevisor@AuthorCount}
-  \stepcounter{newrevisor@Author}%
-  \def\newrevisor@ID{\csuse{newrevisor@AuthorID\thenewrevisor@Author}}%
-  \numdef{\newrevisor@InSum}{\value{newrevisor@locEditCounter\newrevisor@ID} + \value{newrevisor@locCommentCounter\newrevisor@ID}}%
-  \ifnumcomp{\newrevisor@InSum}{=}{0}{}{%
-    \noindent\textbf{\color{\csuse{newrevisor@AuthorColor\newrevisor@ID}}\newrevisor@ID}: \the\value{newrevisor@locCommentCounter\newrevisor@ID}\ comments, \the\value{newrevisor@locEditCounter\newrevisor@ID}\ revisions\\
-    }%
-  \repeat% 
-}{%
-  \emph{List of revisions is available after the next \LaTeX\ run.}%
-  \PackageWarning{newrevisor}{LaTeX rerun needed for list of revisions}%
-}% \file_if_exist:nTF
-}% \listofchanges
+  \IfFileExists{\jobname.\newrevisor@locextension}{%
+    % Start from zero: the counts are reconstructed from .lor.
+    \setcounter{newrevisor@Author}{0}%
+    \loop
+      \unless\ifnum
+        \thenewrevisor@Author=\value{newrevisor@AuthorCount}
+        \stepcounter{newrevisor@Author}%
+        \edef\newrevisor@ID{%
+          \csuse{newrevisor@AuthorID\thenewrevisor@Author}%
+        }%
+        \setcounter{newrevisor@locEditCounter\newrevisor@ID}{0}%
+        \setcounter{newrevisor@locCommentCounter\newrevisor@ID}{0}%
+    \repeat
+    % Reconstruct the counts from the .lor file.
+    \begingroup
+      \let\newrevisorlocEdit\newrevisor@locEditEmpty
+      \let\newrevisorlocComment\newrevisor@locCommentEmpty
+      \let\contentsline\newrevisor@juststepcontentsline
+      \input{\jobname.\newrevisor@locextension}%
+    \endgroup
+    % Print the summary.
+    \setcounter{newrevisor@Author}{0}%
+    \loop
+      \unless\ifnum
+        \thenewrevisor@Author=\value{newrevisor@AuthorCount}
+        \stepcounter{newrevisor@Author}%
+        \def\newrevisor@ID{%
+          \csuse{newrevisor@AuthorID\thenewrevisor@Author}%
+        }%
+        \numdef{\newrevisor@InSum}{%
+          \value{newrevisor@locEditCounter\newrevisor@ID} +
+          \value{newrevisor@locCommentCounter\newrevisor@ID}%
+        }%
+        \ifnumcomp{\newrevisor@InSum}{=}{0}{}{%
+          \noindent
+          \textbf{%
+            \color{\csuse{newrevisor@AuthorColor\newrevisor@ID}}%
+            \newrevisor@ID
+          }: %
+          \the\value{newrevisor@locCommentCounter\newrevisor@ID}%
+          \ comments, %
+          \the\value{newrevisor@locEditCounter\newrevisor@ID}%
+          \ revisions\\
+        }%
+    \repeat%
+  }{%
+    \emph{List of revisions is available after the next \LaTeX\ run.}%
+    \PackageWarning{newrevisor}{LaTeX rerun needed for list of revisions}%
+  }%
+}% \listofsumchanges
 
 %% Handle different colors for deletion and adding
 \NewDocumentCommand{\newrevisor}{mmO{#2}}{\newrevisor@twocolors{#1}{#2}{#3}}
