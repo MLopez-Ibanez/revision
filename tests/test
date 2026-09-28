@@ -57,7 +57,7 @@ check_snapshot() {
         if [ $? -ne 0 ]; then
             echo "ERROR: ${old} and ${new} are different!!!"
             echo "note: diffimg tests/${old} tests/${new}"
-            echo "note: ./visual_diff.R \"test/${old}\""
+            echo "note: ./visual_diff.R \"tests/${old}\""
             perceptualdiff ${old} ${new}
             ERROR=1
         else
