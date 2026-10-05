@@ -1,5 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{newrevisor}[2026/08/19 v0.13 newrevisor]
+% Date MUST follow YYYY/MM/DD using leading zeroes if needed!
+\ProvidesPackage{newrevisor}[2026/10/05 v0.14 newrevisor]
 % A LaTeX style file for providing comments and revising text
 %
 % Author: Manuel Lopez-Ibanez  <manuel.lopez-ibanez@manchester.ac.uk>
@@ -59,6 +60,14 @@
   \fi
 \fi
 
+% Set defaults here so the user cannot override them.
+\NewDocumentCommand{\newrevisor@colorbox}{mm}{%
+  \begingroup
+    \setlength{\fboxsep}{3pt}%
+    \setlength{\fboxrule}{0.4pt}%
+    \colorbox{#1}{#2}%
+  \endgroup
+}
 % https://tex.stackexchange.com/questions/110780/remove-macro-from-list-like-lof
 \def\vanishprotect{\ifx\protect\@typeset@protect%
 \expandafter\@firstofone\else\expandafter\@gobble\fi}
@@ -192,7 +201,7 @@
   \else % NOT todonotes
     \ifREVISOR@pretty%
       \NewDocumentCommand\newrevisor@TextComment{O{red}m+m}{%
-        \colorbox{#1}{\normalfont\bfseries\sffamily\scriptsize\textcolor{white}{\MakeUppercase #2}}{\color{#1}\normalfont\sffamily\ensuremath{[}\nobreak{\itshape #3}\nobreak\ensuremath{]}}}
+        \newrevisor@colorbox{#1}{\normalfont\bfseries\sffamily\scriptsize\textcolor{white}{\MakeUppercase #2}}{\color{#1}\normalfont\sffamily\ensuremath{[}\nobreak{\itshape #3}\nobreak\ensuremath{]}}}
     \else%
       \NewDocumentCommand\newrevisor@TextComment{O{red}m+m}{[{\newrevisor@smaller\MakeUppercase{#2}}: #3]}
     \fi
